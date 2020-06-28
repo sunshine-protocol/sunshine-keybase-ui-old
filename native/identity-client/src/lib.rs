@@ -1,5 +1,5 @@
-use ffi_identity::impl_ffi;
+// use ffi_identity::impl_ffi;
 
-struct Runtime;
+// struct Runtime;
 
-impl_ffi!(runtime: Runtime);
+// impl_ffi!(runtime: Runtime);
