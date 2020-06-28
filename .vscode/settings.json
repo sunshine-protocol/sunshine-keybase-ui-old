@@ -1,3 +1,6 @@
 {
-    "dart.analysisExcludedFolders": ["packages/identity_client/lib/ffi.dart"]
+    "dart.analysisExcludedFolders": [
+        "packages/identity_client/lib/ffi.dart",
+        "lib/setup.iconfig.dart"
+    ]
 }
