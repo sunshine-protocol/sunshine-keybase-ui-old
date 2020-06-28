@@ -1,0 +1,3 @@
+{
+    "dart.analysisExcludedFolders": ["packages/identity_client/lib/ffi.dart"]
+}

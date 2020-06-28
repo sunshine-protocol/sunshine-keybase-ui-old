@@ -1,0 +1,11 @@
+[package]
+name = "identity-client"
+version = "0.1.0"
+authors = ["Shady Khalifa <shekohex@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+ffi-identity = { git = "https://github.com/sunshine-protocol/sunshine-identity", package = "ffi-identity" }
