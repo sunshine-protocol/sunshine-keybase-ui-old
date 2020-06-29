@@ -11,4 +11,8 @@ public class SwiftIdentityClientPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     result("iOS " + UIDevice.current.systemVersion)
   }
+
+  public static func dummyMethodToEnforceBundling() {
+    last_error_length()
+  }
 }
