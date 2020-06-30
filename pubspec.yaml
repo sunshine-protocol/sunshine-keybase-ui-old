@@ -18,6 +18,8 @@ dependencies:
   injectable: ^0.3.0
   get_it: ^4.0.2
   shared_preferences: ">=0.5.0 <2.0.0"
+  identity_client:
+    path: ./packages/identity_client
 
 dev_dependencies:
   flutter_test:

@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:identity/screens/unlock_account/unlock_account_view_model.dart';
 import 'package:identity/ui/account_details_form/account_details_form_view_model.dart';
 import 'package:identity/screens/account_pharse_confirmation/account_pharse_confirmation_view_model.dart';
+import 'package:identity/services/identity_client_service.dart';
 import 'package:get_it/get_it.dart';
 
 Future<void> $initGetIt(GetIt g, {String environment}) async {
@@ -37,6 +38,8 @@ Future<void> $initGetIt(GetIt g, {String environment}) async {
           accountDetailsService: g<AccountDetailsService>()));
   g.registerFactory<AccountPharseConfirmationViewModel>(() =>
       AccountPharseConfirmationViewModel(accountService: g<AccountService>()));
+  g.registerLazySingleton<IdentityClientService>(() =>
+      IdentityClientService(pathProviderService: g<PathProviderService>()));
 }
 
 class _$RegisterModule extends RegisterModule {}
