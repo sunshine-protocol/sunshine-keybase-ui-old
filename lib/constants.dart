@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 class Routes {
   static const blank = '/dev/null';
   static const intro = '/';
-  static const generateAccount = '/account/generate';
-  static const accountPharse = '/account/phrase';
+  static const generateAccountStepOne = '/account/generate/step/1';
+  static const generateAccountStepTwo = '/account/generate/step/2';
+  static const generateAccountDone = '/account/generate/done';
   static const accountPharseConfirmation = '/account/phrase/confirmation';
   static const recoverAccount = '/account/recover';
   static const unloackAccount = '/account/unlock';

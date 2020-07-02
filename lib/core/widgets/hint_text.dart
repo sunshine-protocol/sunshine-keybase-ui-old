@@ -13,6 +13,7 @@ class HintText extends StatelessWidget {
         fontWeight: FontWeight.w500,
         color: Colors.black54,
       ),
+      textAlign: TextAlign.center,
     );
   }
 }

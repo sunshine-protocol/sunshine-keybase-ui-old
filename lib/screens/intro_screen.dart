@@ -35,8 +35,10 @@ class _IntroScreenState extends State<IntroScreen> {
           SizedBox(height: 145.h.toDouble()),
           Button(
             variant: ButtonVariant.success,
-            text: 'Create Account',
-            onPressed: () {},
+            text: 'Generate Account',
+            onPressed: () {
+              Navigator.of(context).pushNamed(Routes.generateAccountStepOne);
+            },
           ),
           SizedBox(height: 20.h.toDouble()),
           Button(
