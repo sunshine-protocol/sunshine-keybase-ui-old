@@ -1,1 +1,1 @@
-export 'account_details_form/account_details_form.dart';
+export 'sunshine_logo.dart';

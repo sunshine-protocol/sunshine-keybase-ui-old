@@ -83,26 +83,28 @@ class _InputState extends State<Input> {
           textAlign: TextAlign.start,
           decoration: InputDecoration(
             errorText: widget.errorText,
-            fillColor: Colors.white,
+            fillColor: const Color(0xFFEEEEEE),
+            alignLabelWithHint: true,
+            hintStyle: TextStyle(
+              fontSize: 18.ssp.toDouble(),
+              fontWeight: FontWeight.w500,
+              color: Colors.black38,
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7.w.toDouble()),
-              borderSide: BorderSide(
-                color: Colors.black87,
-              ),
+              borderRadius: BorderRadius.circular(15.w.toDouble()),
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7.w.toDouble()),
-              borderSide: const BorderSide(
-                color: AppColors.secondry,
-              ),
+              borderRadius: BorderRadius.circular(15.w.toDouble()),
+              borderSide: BorderSide.none,
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7.w.toDouble()),
-              borderSide: BorderSide(
-                color: Colors.red,
+              borderRadius: BorderRadius.circular(15.w.toDouble()),
+              borderSide: const BorderSide(
+                color: AppColors.danger,
               ),
             ),
-            contentPadding: EdgeInsets.all(12.w.toDouble()),
+            contentPadding: EdgeInsets.all(14.w.toDouble()),
             filled: true,
             prefixText: widget.prefixText,
             hintText: widget.hintText,
