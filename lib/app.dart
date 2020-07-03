@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
       ),
-      initialRoute: Routes.intro,
+      initialRoute: Routes.main,
       onGenerateRoute: _generateRoute,
     );
   }
@@ -31,6 +31,10 @@ class MyApp extends StatelessWidget {
       case Routes.generateAccountDone:
         return MaterialPageRoute(
           builder: (_) => GenerateAccountDoneScreen(),
+        );
+      case Routes.main:
+        return MaterialPageRoute(
+          builder: (_) => MainScreen(),
         );
       case Routes.blank:
         return MaterialPageRoute(builder: (_) => BlankScreen());
