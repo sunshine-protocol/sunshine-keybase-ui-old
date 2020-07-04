@@ -1,6 +1,11 @@
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:identity/identity.dart';
 
+import 'guards/guards.dart';
+
+export 'guards/guards.dart';
+export 'router.gr.dart';
+
 @AdaptiveAutoRouter(
   routes: [
     AdaptiveRoute(page: BlankScreen),
@@ -11,7 +16,7 @@ import 'package:identity/identity.dart';
     AdaptiveRoute(page: RecoverAccountStepOneScreen),
     AdaptiveRoute(page: RecoverAccountStepTwoScreen),
     AdaptiveRoute(page: RecoverAccountDoneScreen),
-    AdaptiveRoute(page: MainScreen),
+    AdaptiveRoute(page: MainScreen, guards: [HasAccountGuard]),
     AdaptiveRoute(page: WalletTransferScreen),
     AdaptiveRoute(page: WalletTransferConfirmationScreen),
     AdaptiveRoute(page: WalletTransferDoneScreen),

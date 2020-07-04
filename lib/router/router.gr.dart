@@ -12,6 +12,7 @@ import 'package:identity/screens/intro_screen.dart';
 import 'package:identity/screens/generate_account_screen.dart';
 import 'package:identity/screens/recover_account_screen.dart';
 import 'package:identity/screens/main_screen.dart';
+import 'package:identity/router/guards/has_account_guard.dart';
 import 'package:identity/screens/wallet_transfer_screen.dart';
 import 'package:identity/screens/account_screen.dart';
 
@@ -68,7 +69,7 @@ class Router extends RouterBase {
     RouteDef(Routes.recoverAccountStepTwoScreen,
         page: RecoverAccountStepTwoScreen),
     RouteDef(Routes.recoverAccountDoneScreen, page: RecoverAccountDoneScreen),
-    RouteDef(Routes.mainScreen, page: MainScreen),
+    RouteDef(Routes.mainScreen, page: MainScreen, guards: [HasAccountGuard]),
     RouteDef(Routes.walletTransferScreen, page: WalletTransferScreen),
     RouteDef(Routes.walletTransferConfirmationScreen,
         page: WalletTransferConfirmationScreen),

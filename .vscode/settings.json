@@ -2,6 +2,6 @@
     "dart.analysisExcludedFolders": [
         "packages/identity_client/lib/ffi.dart",
         "lib/setup.iconfig.dart",
-        "lib/router.gr.dart"
+        "lib/router/router.gr.dart"
     ]
 }
