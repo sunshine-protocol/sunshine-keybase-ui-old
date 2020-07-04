@@ -33,8 +33,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
             text: 'Next',
             variant: ButtonVariant.success,
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(Routes.walletTransferConfirmation);
+              ExtendedNavigator.root.pushWalletTransferConfirmationScreen();
             },
           ),
           SizedBox(height: 15.h.toDouble())
@@ -99,11 +98,9 @@ class _WalletTransferConfirmationScreenState
     Future.delayed(
       const Duration(seconds: 2),
       () {
-        // remove all old routes (clear the navigation stack)
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.walletTransferDone,
-          (_) => false,
-        );
+        ExtendedNavigator.root
+          ..clearHistory()
+          ..pushWalletTransferDoneScreen();
       },
     );
   }
@@ -162,11 +159,9 @@ class WalletTransferDoneScreen extends StatelessWidget {
             text: 'Finish',
             variant: ButtonVariant.primary,
             onPressed: () {
-              // remove all old routes (clear the navigation stack)
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                Routes.main,
-                (_) => false,
-              );
+              ExtendedNavigator.root
+                ..clearHistory()
+                ..pushMainScreen();
             },
           ),
           SizedBox(height: 15.h.toDouble())

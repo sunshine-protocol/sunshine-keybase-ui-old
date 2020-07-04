@@ -134,4 +134,5 @@ analyzer:
   exclude:
     - lib/**/*.g.dart
     - lib/setup.iconfig.dart
+    - lib/router.gr.dart
     - packages/**/lib/ffi.dart

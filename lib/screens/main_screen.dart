@@ -52,7 +52,9 @@ class _MainScreenState extends State<MainScreen> {
           Button(
             text: 'Transfer',
             onPressed: () {
-              Navigator.of(context).pushNamed(Routes.walletTransfer);
+              ExtendedNavigator.root
+                ..clearHistory()
+                ..pushWalletTransferScreen();
             },
             variant: ButtonVariant.success,
           ),
@@ -78,7 +80,7 @@ class _MainScreenAppBar extends PreferredSize {
           GestureDetector(
             child: const _ProfileIcon(),
             onTap: () {
-              Navigator.of(context).pushNamed(Routes.account);
+              ExtendedNavigator.root.pushAccountScreen();
             },
           )
         ],

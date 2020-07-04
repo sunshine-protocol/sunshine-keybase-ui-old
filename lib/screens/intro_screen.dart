@@ -37,7 +37,7 @@ class _IntroScreenState extends State<IntroScreen> {
             variant: ButtonVariant.success,
             text: 'Generate Account',
             onPressed: () {
-              Navigator.of(context).pushNamed(Routes.generateAccountStepOne);
+              ExtendedNavigator.root.pushGenerateAccountStepOneScreen();
             },
           ),
           SizedBox(height: 20.h.toDouble()),
@@ -45,7 +45,7 @@ class _IntroScreenState extends State<IntroScreen> {
             variant: ButtonVariant.primary,
             text: 'Restore my account',
             onPressed: () {
-              Navigator.of(context).pushNamed(Routes.recoverAccountStepOne);
+              ExtendedNavigator.root.pushRecoverAccountStepOneScreen();
             },
           )
         ],

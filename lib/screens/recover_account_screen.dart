@@ -34,7 +34,7 @@ class _RecoverAccountStepOneScreenState
             text: 'Next',
             variant: ButtonVariant.success,
             onPressed: () {
-              Navigator.of(context).pushNamed(Routes.recoverAccountStepTwo);
+              ExtendedNavigator.root.pushRecoverAccountStepTwoScreen();
             },
           ),
           SizedBox(height: 15.h.toDouble())
@@ -99,11 +99,9 @@ class _RecoverAccountStepTwoScreenState
     Future.delayed(
       const Duration(seconds: 2),
       () {
-        // remove all old routes (clear the navigation stack)
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.recoverAccountDone,
-          (_) => false,
-        );
+        ExtendedNavigator.root
+          ..clearHistory()
+          ..pushRecoverAccountDoneScreen();
       },
     );
   }
@@ -169,11 +167,9 @@ class RecoverAccountDoneScreen extends StatelessWidget {
             text: 'Finish',
             variant: ButtonVariant.primary,
             onPressed: () {
-              // remove all old routes (clear the navigation stack)
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                Routes.main,
-                (_) => false,
-              );
+              ExtendedNavigator.root
+                ..clearHistory()
+                ..pushMainScreen();
             },
           ),
           SizedBox(height: 15.h.toDouble())

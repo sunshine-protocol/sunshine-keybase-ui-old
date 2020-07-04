@@ -36,7 +36,7 @@ class _GenerateAccountStepOneScreenState
             text: 'Next',
             variant: ButtonVariant.success,
             onPressed: () {
-              Navigator.of(context).pushNamed(Routes.generateAccountStepTwo);
+              ExtendedNavigator.root.pushGenerateAccountStepTwoScreen();
             },
           ),
           SizedBox(height: 15.h.toDouble())
@@ -101,11 +101,9 @@ class _GenerateAccountStepTwoScreenState
     Future.delayed(
       const Duration(seconds: 2),
       () {
-        // remove all old routes (clear the navigation stack)
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.generateAccountDone,
-          (_) => false,
-        );
+        ExtendedNavigator.root
+          ..clearHistory()
+          ..pushGenerateAccountDoneScreen();
       },
     );
   }
@@ -171,11 +169,9 @@ class GenerateAccountDoneScreen extends StatelessWidget {
             text: 'Finish',
             variant: ButtonVariant.primary,
             onPressed: () {
-              // remove all old routes (clear the navigation stack)
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                Routes.main,
-                (_) => false,
-              );
+              ExtendedNavigator.root
+                ..clearHistory()
+                ..pushMainScreen();
             },
           ),
           SizedBox(height: 15.h.toDouble())
