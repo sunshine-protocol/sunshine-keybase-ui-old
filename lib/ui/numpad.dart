@@ -115,7 +115,7 @@ class NumpadButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttonStyle = TextStyle(
-      fontSize: 35,
+      fontSize: 35.ssp.toDouble(),
       fontWeight: FontWeight.bold,
       color: Colors.black,
     );
@@ -134,7 +134,7 @@ class NumpadButton extends StatelessWidget {
           borderSide: BorderSide.none,
           splashColor: Colors.transparent,
           onPressed: onPressed,
-          child: Center(child: label),
+          child: label,
         ),
       ),
     );

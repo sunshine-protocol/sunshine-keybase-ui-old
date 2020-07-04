@@ -6,8 +6,13 @@ import 'package:intl/intl.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configure();
-  Intl.defaultLocale = 'en_US';
+  await _setup();
   runApp(MyApp());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+}
+
+Future _setup() async {
+  await configure();
+  Intl.defaultLocale = 'en_US';
+  // other pre-start setup goes here
 }

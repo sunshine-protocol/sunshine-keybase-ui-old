@@ -32,9 +32,33 @@ class MyApp extends StatelessWidget {
         return MaterialPageRoute(
           builder: (_) => GenerateAccountDoneScreen(),
         );
+      case Routes.recoverAccountStepOne:
+        return MaterialPageRoute(
+          builder: (_) => RecoverAccountStepOneScreen(),
+        );
+      case Routes.recoverAccountStepTwo:
+        return MaterialPageRoute(
+          builder: (_) => RecoverAccountStepTwoScreen(),
+        );
+      case Routes.recoverAccountDone:
+        return MaterialPageRoute(
+          builder: (_) => RecoverAccountDoneScreen(),
+        );
       case Routes.main:
         return MaterialPageRoute(
           builder: (_) => MainScreen(),
+        );
+      case Routes.walletTransfer:
+        return MaterialPageRoute(
+          builder: (_) => WalletTransferScreen(),
+        );
+      case Routes.walletTransferConfirmation:
+        return MaterialPageRoute(
+          builder: (_) => WalletTransferConfirmationScreen(),
+        );
+      case Routes.walletTransferDone:
+        return MaterialPageRoute(
+          builder: (_) => WalletTransferDoneScreen(),
         );
       case Routes.blank:
         return MaterialPageRoute(builder: (_) => BlankScreen());

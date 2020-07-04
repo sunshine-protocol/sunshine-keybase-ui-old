@@ -80,31 +80,33 @@ class _GenerateAccountStepTwoScreenState
             child: SizedBox(),
           ),
           Button(
-            text: 'Next',
+            text: 'Generate',
             variant: ButtonVariant.success,
-            onPressed: () {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (_) => const LoadingView(
-                  loadingMessage: 'We are creating account for you',
-                ),
-              );
-              Future.delayed(
-                const Duration(seconds: 2),
-                () {
-                  // remove all old routes (clear the navigation stack)
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    Routes.generateAccountDone,
-                    (_) => false,
-                  );
-                },
-              );
-            },
+            onPressed: _generateAccount,
           ),
           SizedBox(height: 15.h.toDouble())
         ],
       ),
+    );
+  }
+
+  void _generateAccount() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const LoadingView(
+        loadingMessage: 'We are creating account for you',
+      ),
+    );
+    Future.delayed(
+      const Duration(seconds: 2),
+      () {
+        // remove all old routes (clear the navigation stack)
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.generateAccountDone,
+          (_) => false,
+        );
+      },
     );
   }
 }

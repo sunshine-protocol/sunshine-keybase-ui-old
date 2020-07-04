@@ -39,7 +39,6 @@ class _MainScreenState extends State<MainScreen> {
           Numpad(
             length: 16,
             onChange: (v) {
-              debugPrint(v);
               setState(() {
                 if (v.isEmpty) {
                   _value = '0';
@@ -52,7 +51,9 @@ class _MainScreenState extends State<MainScreen> {
           SizedBox(height: 10.h.toDouble()),
           Button(
             text: 'Transfer',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(Routes.walletTransfer);
+            },
             variant: ButtonVariant.success,
           ),
           SizedBox(height: 20.h.toDouble()),
@@ -72,7 +73,15 @@ class _MainScreenAppBar extends PreferredSize {
       alignment: Alignment.center,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [_LogoIcon(), _ProfileIcon()],
+        children: [
+          const _LogoIcon(),
+          GestureDetector(
+            child: const _ProfileIcon(),
+            onTap: () {
+              Navigator.of(context).pushNamed(Routes.account);
+            },
+          )
+        ],
       ),
     );
   }

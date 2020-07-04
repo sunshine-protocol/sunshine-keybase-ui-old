@@ -78,31 +78,33 @@ class _RecoverAccountStepTwoScreenState
             child: SizedBox(),
           ),
           Button(
-            text: 'Next',
+            text: 'Restore',
             variant: ButtonVariant.success,
-            onPressed: () {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (_) => const LoadingView(
-                  loadingMessage: 'we are restoring your account',
-                ),
-              );
-              Future.delayed(
-                const Duration(seconds: 2),
-                () {
-                  // remove all old routes (clear the navigation stack)
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    Routes.recoverAccountDone,
-                    (_) => false,
-                  );
-                },
-              );
-            },
+            onPressed: _restoreAccount,
           ),
           SizedBox(height: 15.h.toDouble())
         ],
       ),
+    );
+  }
+
+  void _restoreAccount() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const LoadingView(
+        loadingMessage: 'we are restoring your account',
+      ),
+    );
+    Future.delayed(
+      const Duration(seconds: 2),
+      () {
+        // remove all old routes (clear the navigation stack)
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.recoverAccountDone,
+          (_) => false,
+        );
+      },
     );
   }
 }

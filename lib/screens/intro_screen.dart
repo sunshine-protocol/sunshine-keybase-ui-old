@@ -44,7 +44,9 @@ class _IntroScreenState extends State<IntroScreen> {
           Button(
             variant: ButtonVariant.primary,
             text: 'Restore my account',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(Routes.recoverAccountStepOne);
+            },
           )
         ],
       ),
