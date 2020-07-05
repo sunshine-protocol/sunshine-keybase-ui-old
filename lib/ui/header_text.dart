@@ -12,17 +12,14 @@ class HeaderText extends StatelessWidget {
         top: 10.h.toDouble(),
         right: 24.w.toDouble(),
       ),
-      child: FittedBox(
-        fit: BoxFit.fitWidth,
-        child: Text(
-          _text,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20.ssp.toDouble(),
-            fontWeight: FontWeight.w500,
-          ),
-          textAlign: TextAlign.start,
+      child: Text(
+        _text,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 20.ssp.toDouble(),
+          fontWeight: FontWeight.w500,
         ),
+        textAlign: TextAlign.start,
       ),
     );
   }

@@ -62,7 +62,10 @@ class _GenerateAccountStepTwoScreenState
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const HeaderText('Add a password to secure your account'),
+          const FittedBox(
+            fit: BoxFit.fitWidth,
+            child: HeaderText('Add a password to secure your account'),
+          ),
           SizedBox(height: 30.h.toDouble()),
           const Input(
             hintText: 'Password',

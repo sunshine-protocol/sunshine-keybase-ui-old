@@ -14,6 +14,8 @@ class HintText extends StatelessWidget {
         color: Colors.black54,
       ),
       textAlign: TextAlign.center,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
     );
   }
 }
