@@ -5,7 +5,7 @@ class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(title: 'Account'),
+      appBar: const MyAppBar(title: 'Account', elevation: 1),
       body: ListView(
         children: [
           const HeaderText('Your Information'),
@@ -39,6 +39,9 @@ class AccountScreen extends StatelessWidget {
           ListCell(
             title: 'Devices',
             trailing: Icon(Icons.chevron_right, size: 40),
+            onTap: () {
+              ExtendedNavigator.root.pushDevicesScreen();
+            },
           ),
           ListCell(
             title: 'Identities',

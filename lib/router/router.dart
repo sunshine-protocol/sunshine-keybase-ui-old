@@ -21,6 +21,8 @@ export 'router.gr.dart';
     AdaptiveRoute(page: WalletTransferConfirmationScreen),
     AdaptiveRoute(page: WalletTransferDoneScreen),
     AdaptiveRoute(page: AccountScreen),
+    AdaptiveRoute(page: DevicesScreen),
+    AdaptiveRoute(page: PaperKeyScreen),
   ],
   generateNavigationHelperExtension: true,
 )

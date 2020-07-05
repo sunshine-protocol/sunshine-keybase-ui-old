@@ -15,6 +15,8 @@ import 'package:identity/screens/main_screen.dart';
 import 'package:identity/router/guards/has_account_guard.dart';
 import 'package:identity/screens/wallet_transfer_screen.dart';
 import 'package:identity/screens/account_screen.dart';
+import 'package:identity/screens/devices_screen.dart';
+import 'package:identity/screens/paper_key_screen.dart';
 
 class Routes {
   static const String blankScreen = '/blank-screen';
@@ -36,6 +38,8 @@ class Routes {
       '/wallet-transfer-confirmation-screen';
   static const String walletTransferDoneScreen = '/wallet-transfer-done-screen';
   static const String accountScreen = '/account-screen';
+  static const String devicesScreen = '/devices-screen';
+  static const String paperKeyScreen = '/paper-key-screen';
   static const all = <String>{
     blankScreen,
     introScreen,
@@ -50,6 +54,8 @@ class Routes {
     walletTransferConfirmationScreen,
     walletTransferDoneScreen,
     accountScreen,
+    devicesScreen,
+    paperKeyScreen,
   };
 }
 
@@ -75,6 +81,8 @@ class Router extends RouterBase {
         page: WalletTransferConfirmationScreen),
     RouteDef(Routes.walletTransferDoneScreen, page: WalletTransferDoneScreen),
     RouteDef(Routes.accountScreen, page: AccountScreen),
+    RouteDef(Routes.devicesScreen, page: DevicesScreen),
+    RouteDef(Routes.paperKeyScreen, page: PaperKeyScreen),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -157,6 +165,18 @@ class Router extends RouterBase {
         settings: data,
       );
     },
+    DevicesScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => DevicesScreen(),
+        settings: data,
+      );
+    },
+    PaperKeyScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => PaperKeyScreen(),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -200,4 +220,10 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
 
   Future<dynamic> pushAccountScreen() =>
       pushNamed<dynamic>(Routes.accountScreen);
+
+  Future<dynamic> pushDevicesScreen() =>
+      pushNamed<dynamic>(Routes.devicesScreen);
+
+  Future<dynamic> pushPaperKeyScreen() =>
+      pushNamed<dynamic>(Routes.paperKeyScreen);
 }

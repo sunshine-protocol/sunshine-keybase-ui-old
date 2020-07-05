@@ -21,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          SizedBox(height: 10.h.toDouble()),
+          SizedBox(height: 20.h.toDouble()),
           _TokensValue(_numberFormat.format(_numberFormat.parse(_value))),
           SizedBox(height: 4.h.toDouble()),
           FittedBox(
@@ -35,7 +35,8 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
           ),
-          SizedBox(height: 40.h.toDouble()),
+          SizedBox(height: 4.h.toDouble()),
+          const Expanded(child: SizedBox()),
           Numpad(
             length: 16,
             onChange: (v) {
@@ -48,13 +49,11 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
           ),
-          SizedBox(height: 10.h.toDouble()),
+          SizedBox(height: 40.h.toDouble()),
           Button(
             text: 'Transfer',
             onPressed: () {
-              ExtendedNavigator.root
-                ..clearHistory()
-                ..pushWalletTransferScreen();
+              ExtendedNavigator.root.pushWalletTransferScreen();
             },
             variant: ButtonVariant.success,
           ),
