@@ -25,7 +25,7 @@ class _ButtonState extends State<Button> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 50.w.toDouble()),
+      padding: EdgeInsets.symmetric(horizontal: 40.w.toDouble()),
       child: RaisedButton(
         padding: const EdgeInsets.all(0),
         onPressed: widget.enabled ? widget.onPressed : null,
@@ -37,7 +37,7 @@ class _ButtonState extends State<Button> {
         disabledColor: AppColors.disabled,
         color: _variantToColor(widget.variant),
         child: Container(
-          height: 62.h.toDouble(),
+          height: 52.h.toDouble(),
           child: Center(
             child: Text(
               widget.text,
