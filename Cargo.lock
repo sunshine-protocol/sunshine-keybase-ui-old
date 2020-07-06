@@ -2844,6 +2844,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3728d817d99e5ac407411fa471ff9800a778d88a24685968b36824eaf4bee400"
 
 [[package]]
+name = "memmap"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6585fd95e7bb50d6cc31e20d4cf9afb4e2ba16c5846fc76793f11218da9c475b"
+dependencies = [
+ "libc",
+ "winapi 0.3.9",
+]
+
+[[package]]
 name = "memoffset"
 version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3402,6 +3412,20 @@ dependencies = [
  "sp-api",
  "sp-runtime",
  "sp-std",
+]
+
+[[package]]
+name = "parity-db"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "00d595e372d119261593297debbe4193811a4dc811d2a1ccbb8caaa6666ad7ab"
+dependencies = [
+ "blake2-rfc",
+ "crc32fast",
+ "libc",
+ "log",
+ "memmap",
+ "parking_lot 0.10.2",
 ]
 
 [[package]]
@@ -4570,6 +4594,7 @@ dependencies = [
  "kvdb-memorydb",
  "linked-hash-map",
  "log",
+ "parity-db",
  "parity-scale-codec",
  "parity-util-mem",
  "parking_lot 0.10.2",
@@ -6282,7 +6307,7 @@ checksum = "502d53007c02d7605a05df1c1a73ee436952781653da5d0bf57ad608f66932c1"
 [[package]]
 name = "sunshine-client"
 version = "0.1.0"
-source = "git+https://github.com/sunshine-protocol/sunshine.git?branch=remove-rocksdb#ca0ba5c4323dae1b4a366b722d9a16317fea7590"
+source = "git+https://github.com/sunshine-protocol/sunshine.git#0d27a44e53aab8b7e954ef4cb6a00c99b9deae88"
 dependencies = [
  "ipfs-embed",
  "keybase-keystore",
@@ -6389,7 +6414,7 @@ dependencies = [
 [[package]]
 name = "sunshine-node"
 version = "0.1.0"
-source = "git+https://github.com/sunshine-protocol/sunshine.git?branch=remove-rocksdb#ca0ba5c4323dae1b4a366b722d9a16317fea7590"
+source = "git+https://github.com/sunshine-protocol/sunshine.git#0d27a44e53aab8b7e954ef4cb6a00c99b9deae88"
 dependencies = [
  "futures 0.3.5",
  "hex-literal",
@@ -6398,6 +6423,7 @@ dependencies = [
  "sc-basic-authorship",
  "sc-cli",
  "sc-client-api",
+ "sc-client-db",
  "sc-consensus",
  "sc-consensus-aura",
  "sc-executor",
@@ -6420,7 +6446,7 @@ dependencies = [
 [[package]]
 name = "sunshine-runtime"
 version = "0.1.0"
-source = "git+https://github.com/sunshine-protocol/sunshine.git?branch=remove-rocksdb#ca0ba5c4323dae1b4a366b722d9a16317fea7590"
+source = "git+https://github.com/sunshine-protocol/sunshine.git#0d27a44e53aab8b7e954ef4cb6a00c99b9deae88"
 dependencies = [
  "frame-executive",
  "frame-support",
@@ -6429,7 +6455,6 @@ dependencies = [
  "pallet-balances",
  "pallet-grandpa",
  "pallet-randomness-collective-flip",
- "pallet-session",
  "pallet-timestamp",
  "pallet-transaction-payment",
  "parity-scale-codec",
