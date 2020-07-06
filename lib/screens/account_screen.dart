@@ -10,13 +10,13 @@ class AccountScreen extends StatelessWidget {
         children: [
           const HeaderText('Your Information'),
           SizedBox(height: 15.w.toDouble()),
-          const HintText('Tip: double click to copy to clipboard'),
+          const HintText('Tip: double tap to copy to clipboard'),
           SizedBox(height: 10.w.toDouble()),
           ListCell(
             title: 'UID',
             trailing: SizedBox(
-              width: 120.w.toDouble(),
-              child: const HintText('1001101'),
+              width: 60.w.toDouble(),
+              child: const HintText('000001'),
             ),
           ),
           ListCell(
@@ -29,7 +29,7 @@ class AccountScreen extends StatelessWidget {
           ListCell(
             title: 'Github',
             trailing: SizedBox(
-              width: 120.w.toDouble(),
+              width: 90.w.toDouble(),
               child: const HintText('@shekohex'),
             ),
           ),

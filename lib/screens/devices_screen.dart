@@ -149,7 +149,7 @@ class RevokeDeviceScreen extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (_) => const LoadingView(
-        loadingMessage: 'We are creating account for you',
+        loadingMessage: 'we are revoking this device',
       ),
     );
     Future.delayed(
@@ -188,7 +188,7 @@ class RevokeDeviceDoneScreen extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..popPages(2)
+                ..popPages(1)
                 ..pushDevicesScreen();
             },
           ),

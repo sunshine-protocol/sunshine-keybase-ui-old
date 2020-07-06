@@ -44,7 +44,12 @@ class Routes {
   static const String revokeDeviceScreen = '/revoke-device-screen';
   static const String revokeDeviceDoneScreen = '/revoke-device-done-screen';
   static const String identitiesScreen = '/identities-screen';
-  static const String identityProveScreen = '/identity-prove-screen';
+  static const String proveIdentityScreen = '/prove-identity-screen';
+  static const String proveIdentityInstractionsScreen =
+      '/prove-identity-instractions-screen';
+  static const String proveIdentityDone = '/prove-identity-done';
+  static const String revokeIdentityScreen = '/revoke-identity-screen';
+  static const String revokeIdentityDoneScreen = '/revoke-identity-done-screen';
   static const all = <String>{
     blankScreen,
     introScreen,
@@ -64,7 +69,11 @@ class Routes {
     revokeDeviceScreen,
     revokeDeviceDoneScreen,
     identitiesScreen,
-    identityProveScreen,
+    proveIdentityScreen,
+    proveIdentityInstractionsScreen,
+    proveIdentityDone,
+    revokeIdentityScreen,
+    revokeIdentityDoneScreen,
   };
 }
 
@@ -95,7 +104,12 @@ class Router extends RouterBase {
     RouteDef(Routes.revokeDeviceScreen, page: RevokeDeviceScreen),
     RouteDef(Routes.revokeDeviceDoneScreen, page: RevokeDeviceDoneScreen),
     RouteDef(Routes.identitiesScreen, page: IdentitiesScreen),
-    RouteDef(Routes.identityProveScreen, page: IdentityProveScreen),
+    RouteDef(Routes.proveIdentityScreen, page: ProveIdentityScreen),
+    RouteDef(Routes.proveIdentityInstractionsScreen,
+        page: ProveIdentityInstractionsScreen),
+    RouteDef(Routes.proveIdentityDone, page: ProveIdentityDone),
+    RouteDef(Routes.revokeIdentityScreen, page: RevokeIdentityScreen),
+    RouteDef(Routes.revokeIdentityDoneScreen, page: RevokeIdentityDoneScreen),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -208,9 +222,33 @@ class Router extends RouterBase {
         settings: data,
       );
     },
-    IdentityProveScreen: (RouteData data) {
+    ProveIdentityScreen: (RouteData data) {
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => IdentityProveScreen(),
+        builder: (context) => ProveIdentityScreen(),
+        settings: data,
+      );
+    },
+    ProveIdentityInstractionsScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => ProveIdentityInstractionsScreen(),
+        settings: data,
+      );
+    },
+    ProveIdentityDone: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => ProveIdentityDone(),
+        settings: data,
+      );
+    },
+    RevokeIdentityScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => RevokeIdentityScreen(),
+        settings: data,
+      );
+    },
+    RevokeIdentityDoneScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => RevokeIdentityDoneScreen(),
         settings: data,
       );
     },
@@ -273,6 +311,18 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
   Future<dynamic> pushIdentitiesScreen() =>
       pushNamed<dynamic>(Routes.identitiesScreen);
 
-  Future<dynamic> pushIdentityProveScreen() =>
-      pushNamed<dynamic>(Routes.identityProveScreen);
+  Future<dynamic> pushProveIdentityScreen() =>
+      pushNamed<dynamic>(Routes.proveIdentityScreen);
+
+  Future<dynamic> pushProveIdentityInstractionsScreen() =>
+      pushNamed<dynamic>(Routes.proveIdentityInstractionsScreen);
+
+  Future<dynamic> pushProveIdentityDone() =>
+      pushNamed<dynamic>(Routes.proveIdentityDone);
+
+  Future<dynamic> pushRevokeIdentityScreen() =>
+      pushNamed<dynamic>(Routes.revokeIdentityScreen);
+
+  Future<dynamic> pushRevokeIdentityDoneScreen() =>
+      pushNamed<dynamic>(Routes.revokeIdentityDoneScreen);
 }

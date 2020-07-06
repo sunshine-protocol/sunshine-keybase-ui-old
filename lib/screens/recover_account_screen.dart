@@ -67,10 +67,12 @@ class _RecoverAccountStepTwoScreenState
           SizedBox(height: 30.h.toDouble()),
           const Input(
             hintText: 'Password',
+            obscureText: true,
           ),
           SizedBox(height: 14.h.toDouble()),
           const Input(
             hintText: 'Password Again',
+            obscureText: true,
           ),
           SizedBox(height: 30.h.toDouble()),
           const Center(

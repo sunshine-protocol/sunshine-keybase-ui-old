@@ -69,10 +69,12 @@ class _GenerateAccountStepTwoScreenState
           SizedBox(height: 30.h.toDouble()),
           const Input(
             hintText: 'Password',
+            obscureText: true,
           ),
           SizedBox(height: 14.h.toDouble()),
           const Input(
             hintText: 'Password Again',
+            obscureText: true,
           ),
           SizedBox(height: 30.h.toDouble()),
           const Center(
@@ -120,17 +122,9 @@ class GenerateAccountDoneScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(height: 100.h.toDouble()),
-          Center(
-            child: Text(
-              'Your Account has been created\n'
-              'Here is your account id',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.ssp.toDouble(),
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
+          const HeaderText(
+            'Your Account has been created\n'
+            'Here is your account id',
           ),
           SizedBox(height: 30.h.toDouble()),
           const Input(
@@ -138,17 +132,7 @@ class GenerateAccountDoneScreen extends StatelessWidget {
             readOnly: true,
           ),
           SizedBox(height: 30.h.toDouble()),
-          Center(
-            child: Text(
-              'That\'s your device id in your account',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.ssp.toDouble(),
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
+          const HeaderText('That\'s your device id in your account'),
           SizedBox(height: 30.h.toDouble()),
           const Input(
             hintText: '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh',

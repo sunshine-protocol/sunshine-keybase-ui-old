@@ -37,7 +37,8 @@ class _IntroScreenState extends State<IntroScreen> {
             variant: ButtonVariant.success,
             text: 'Generate Account',
             onPressed: () {
-              ExtendedNavigator.root.pushGenerateAccountStepOneScreen();
+              // step one: Device name, we skip that for now.
+              ExtendedNavigator.root.pushGenerateAccountStepTwoScreen();
             },
           ),
           SizedBox(height: 20.h.toDouble()),
