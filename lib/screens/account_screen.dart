@@ -46,6 +46,9 @@ class AccountScreen extends StatelessWidget {
           ListCell(
             title: 'Identities',
             trailing: Icon(Icons.chevron_right, size: 40),
+            onTap: () {
+              ExtendedNavigator.root.pushIdentitiesScreen();
+            },
           ),
           SizedBox(height: 20.w.toDouble()),
           const HeaderText('Legal'),

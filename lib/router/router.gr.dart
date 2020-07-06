@@ -17,6 +17,7 @@ import 'package:identity/screens/wallet_transfer_screen.dart';
 import 'package:identity/screens/account_screen.dart';
 import 'package:identity/screens/devices_screen.dart';
 import 'package:identity/screens/paper_key_screen.dart';
+import 'package:identity/screens/identities_screen.dart';
 
 class Routes {
   static const String blankScreen = '/blank-screen';
@@ -40,6 +41,10 @@ class Routes {
   static const String accountScreen = '/account-screen';
   static const String devicesScreen = '/devices-screen';
   static const String paperKeyScreen = '/paper-key-screen';
+  static const String revokeDeviceScreen = '/revoke-device-screen';
+  static const String revokeDeviceDoneScreen = '/revoke-device-done-screen';
+  static const String identitiesScreen = '/identities-screen';
+  static const String identityProveScreen = '/identity-prove-screen';
   static const all = <String>{
     blankScreen,
     introScreen,
@@ -56,6 +61,10 @@ class Routes {
     accountScreen,
     devicesScreen,
     paperKeyScreen,
+    revokeDeviceScreen,
+    revokeDeviceDoneScreen,
+    identitiesScreen,
+    identityProveScreen,
   };
 }
 
@@ -83,6 +92,10 @@ class Router extends RouterBase {
     RouteDef(Routes.accountScreen, page: AccountScreen),
     RouteDef(Routes.devicesScreen, page: DevicesScreen),
     RouteDef(Routes.paperKeyScreen, page: PaperKeyScreen),
+    RouteDef(Routes.revokeDeviceScreen, page: RevokeDeviceScreen),
+    RouteDef(Routes.revokeDeviceDoneScreen, page: RevokeDeviceDoneScreen),
+    RouteDef(Routes.identitiesScreen, page: IdentitiesScreen),
+    RouteDef(Routes.identityProveScreen, page: IdentityProveScreen),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -177,6 +190,30 @@ class Router extends RouterBase {
         settings: data,
       );
     },
+    RevokeDeviceScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => RevokeDeviceScreen(),
+        settings: data,
+      );
+    },
+    RevokeDeviceDoneScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => RevokeDeviceDoneScreen(),
+        settings: data,
+      );
+    },
+    IdentitiesScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => IdentitiesScreen(),
+        settings: data,
+      );
+    },
+    IdentityProveScreen: (RouteData data) {
+      return buildAdaptivePageRoute<dynamic>(
+        builder: (context) => IdentityProveScreen(),
+        settings: data,
+      );
+    },
   };
 }
 
@@ -226,4 +263,16 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
 
   Future<dynamic> pushPaperKeyScreen() =>
       pushNamed<dynamic>(Routes.paperKeyScreen);
+
+  Future<dynamic> pushRevokeDeviceScreen() =>
+      pushNamed<dynamic>(Routes.revokeDeviceScreen);
+
+  Future<dynamic> pushRevokeDeviceDoneScreen() =>
+      pushNamed<dynamic>(Routes.revokeDeviceDoneScreen);
+
+  Future<dynamic> pushIdentitiesScreen() =>
+      pushNamed<dynamic>(Routes.identitiesScreen);
+
+  Future<dynamic> pushIdentityProveScreen() =>
+      pushNamed<dynamic>(Routes.identityProveScreen);
 }

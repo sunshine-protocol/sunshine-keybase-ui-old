@@ -23,6 +23,10 @@ export 'router.gr.dart';
     AdaptiveRoute(page: AccountScreen),
     AdaptiveRoute(page: DevicesScreen),
     AdaptiveRoute(page: PaperKeyScreen),
+    AdaptiveRoute(page: RevokeDeviceScreen),
+    AdaptiveRoute(page: RevokeDeviceDoneScreen),
+    AdaptiveRoute(page: IdentitiesScreen),
+    AdaptiveRoute(page: IdentityProveScreen),
   ],
   generateNavigationHelperExtension: true,
 )
