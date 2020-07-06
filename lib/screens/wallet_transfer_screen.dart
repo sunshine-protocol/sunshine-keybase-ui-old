@@ -99,7 +99,7 @@ class _WalletTransferConfirmationScreenState
       const Duration(seconds: 2),
       () {
         ExtendedNavigator.root
-          ..clearHistory()
+          ..popPages(1)
           ..pushWalletTransferDoneScreen();
       },
     );
@@ -160,7 +160,7 @@ class WalletTransferDoneScreen extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..clearHistory()
+                ..popPages(1)
                 ..pushMainScreen();
             },
           ),

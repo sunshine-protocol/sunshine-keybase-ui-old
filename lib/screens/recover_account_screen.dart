@@ -103,7 +103,7 @@ class _RecoverAccountStepTwoScreenState
       const Duration(seconds: 2),
       () {
         ExtendedNavigator.root
-          ..clearHistory()
+          ..popPages(1)
           ..pushRecoverAccountDoneScreen();
       },
     );
@@ -171,7 +171,7 @@ class RecoverAccountDoneScreen extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..clearHistory()
+                ..popPages(1)
                 ..pushMainScreen();
             },
           ),

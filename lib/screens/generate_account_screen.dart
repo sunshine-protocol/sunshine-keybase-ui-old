@@ -105,7 +105,7 @@ class _GenerateAccountStepTwoScreenState
       const Duration(seconds: 2),
       () {
         ExtendedNavigator.root
-          ..clearHistory()
+          ..popPages(1)
           ..pushGenerateAccountDoneScreen();
       },
     );
@@ -173,7 +173,7 @@ class GenerateAccountDoneScreen extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..clearHistory()
+                ..popPages(1)
                 ..pushMainScreen();
             },
           ),
