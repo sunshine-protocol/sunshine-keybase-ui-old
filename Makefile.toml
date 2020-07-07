@@ -2,6 +2,12 @@
 CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 CARGO_MAKE_WORKSPACE_INCLUDE_MEMBERS = ["native/identity-client"]
 ANDROID_PLATFORM_VERSION = "28"
+DEV = true
+RELEASE = false
+
+[env.release]
+RELEASE = true
+DEV = false
 
 [tasks.test-flow]
 disabled = true
@@ -9,23 +15,26 @@ disabled = true
 [tasks.build]
 description = "Runs the rust compiler."
 category = "Build"
-command = "cargo"
-args = ["build", "--all-features"]
 dependencies = ["android", "cbindgen", "dart-bindgen"]
 
 [tasks.build.mac]
 description = "Runs the rust compiler."
 category = "Build"
-command = "cargo"
-args = ["build", "--all-features"]
-dependencies = ["android", "ios", "post-ios", "cbindgen", "dart-bindgen"]
+dependencies = ["android", "ios", "ios-release", "post-ios", "cbindgen", "dart-bindgen"]
 
 [tasks.ios]
-condition = { platforms = ["mac"] }
+condition = { platforms = ["mac"], env_true = ["DEV"] }
 description = "Build ios targets."
 category = "Build"
 command = "cargo"
 args = ["lipo"]
+
+[tasks.ios-release]
+condition = { platforms = ["mac"], env_true = ["RELEASE"] }
+description = "Build ios targets."
+category = "Build"
+command = "cargo"
+args = ["lipo", "--release"]
 
 [tasks.post-ios]
 script_runner = "@duckscript"
@@ -47,14 +56,19 @@ category = "Build"
 dependencies = [
     "pre-android",
     "android-aarch64",
+    "android-aarch64-release",
     "post-android-aarch64",
     "android-armv7",
+    "android-armv7-release",
     "post-android-armv7",
     "android-i686",
+    "android-i686-release",
     "post-android-i686",
 ]
 
 [tasks.android-aarch64]
+private = true
+condition = { env_true = ["DEV"] }
 command = "cargo"
 args = [
   "ndk", 
@@ -66,6 +80,8 @@ args = [
   ]
 
 [tasks.android-armv7]
+private = true
+condition = { env_true = ["DEV"] }
 command = "cargo"
 args = [
   "ndk", 
@@ -77,6 +93,8 @@ args = [
   ]
 
 [tasks.android-i686]
+private = true
+condition = { env_true = ["DEV"] }
 command = "cargo"
 args = [
   "ndk", 
@@ -87,7 +105,50 @@ args = [
   "build"
   ]
 
+[tasks.android-aarch64-release]
+private = true
+condition = { env_true = ["RELEASE"] }
+command = "cargo"
+args = [
+  "ndk", 
+  "--platform", 
+  "${ANDROID_PLATFORM_VERSION}", 
+  "--target", 
+  "aarch64-linux-android", 
+  "build",
+  "--release"
+  ]
+
+[tasks.android-armv7-release]
+private = true
+condition = { env_true = ["RELEASE"] }
+command = "cargo"
+args = [
+  "ndk", 
+  "--platform", 
+  "${ANDROID_PLATFORM_VERSION}", 
+  "--target", 
+  "armv7-linux-androideabi", 
+  "build",
+  "--release"
+  ]
+
+[tasks.android-i686-release]
+private = true
+condition = { env_true = ["RELEASE"] }
+command = "cargo"
+args = [
+  "ndk", 
+  "--platform", 
+  "${ANDROID_PLATFORM_VERSION}", 
+  "--target", 
+  "i686-linux-android", 
+  "build",
+  "--release"
+  ]
+
 [tasks.pre-android]
+private = true
 script_runner = "@duckscript"
 script = [
     "mkdir ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/arm64-v8a",
@@ -96,6 +157,7 @@ script = [
 ]
 
 [tasks.post-android-aarch64]
+private = true
 script_runner = "@duckscript"
 script = [
     """
@@ -105,6 +167,7 @@ script = [
 ]
 
 [tasks.post-android-armv7]
+private = true
 script_runner = "@duckscript"
 script = [
   """
@@ -114,6 +177,7 @@ script = [
 ]
 
 [tasks.post-android-i686]
+private = true
 script_runner = "@duckscript"
 script = [
     """

@@ -7,6 +7,16 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
+  AccountService _accountService;
+  bool _loading;
+  @override
+  void initState() {
+    super.initState();
+    _loading = true;
+    _accountService = GetIt.I.get<AccountService>();
+    _checkIfHasDevice();
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(
@@ -18,6 +28,7 @@ class _IntroScreenState extends State<IntroScreen> {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 280.h.toDouble()),
           SunshineLogo(
@@ -33,24 +44,39 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
           ),
           SizedBox(height: 145.h.toDouble()),
-          Button(
-            variant: ButtonVariant.success,
-            text: 'Generate Account',
-            onPressed: () {
-              // step one: Device name, we skip that for now.
-              ExtendedNavigator.root.pushGenerateAccountStepTwoScreen();
-            },
-          ),
-          SizedBox(height: 20.h.toDouble()),
-          Button(
-            variant: ButtonVariant.primary,
-            text: 'Restore my account',
-            onPressed: () {
-              ExtendedNavigator.root.pushRecoverAccountStepOneScreen();
-            },
-          )
+          if (_loading)
+            const CircularProgressIndicator()
+          else ...[
+            Button(
+              variant: ButtonVariant.success,
+              text: 'Generate Account',
+              onPressed: () {
+                // step one: Device name, we skip that for now.
+                ExtendedNavigator.root.pushGenerateAccountStepTwoScreen();
+              },
+            ),
+            SizedBox(height: 20.h.toDouble()),
+            Button(
+              variant: ButtonVariant.primary,
+              text: 'Restore my account',
+              onPressed: () {
+                ExtendedNavigator.root.pushRecoverAccountStepOneScreen();
+              },
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  Future _checkIfHasDevice() async {
+    final hasDevice = await _accountService.hasDeviceKey();
+    setState(() {
+      _loading = false;
+    });
+    if (hasDevice) {
+      // load the account here
+      await ExtendedNavigator.root.pushMainScreen();
+    }
   }
 }

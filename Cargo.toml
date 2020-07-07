@@ -1,2 +1,7 @@
 [workspace]
 members = ["native/*"]
+
+[profile.release]
+lto = true
+panic = 'abort'
+codegen-units = 1
