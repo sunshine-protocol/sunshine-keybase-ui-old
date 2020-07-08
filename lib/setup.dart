@@ -3,4 +3,5 @@ import 'package:injectable/injectable.dart';
 import 'package:identity/setup.iconfig.dart';
 
 @injectableInit
-Future configureDependencies() async => await $initGetIt(GetIt.I);
+Future<void> configureDependencies({Environment environment}) =>
+    $initGetIt(GetIt.I, environment: environment.name);

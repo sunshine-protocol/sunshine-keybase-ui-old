@@ -7,9 +7,11 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
+  ClientService _clientService;
   @override
   void initState() {
     super.initState();
+    _clientService = GetIt.I.get<ClientService>();
   }
 
   @override
@@ -39,20 +41,47 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
           ),
           SizedBox(height: 145.h.toDouble()),
-          FutureBuilder<bool>(
-            future: Future.delayed(
-              const Duration(milliseconds: 1500),
-              () => true,
-            ),
-            builder: _startUpClient,
+          FutureBuilder(
+            future: _clientService.ready,
+            builder: _clientIsReady,
           ),
         ],
       ),
     );
   }
 
-  Widget _startUpClient(BuildContext context, AsyncSnapshot<bool> snapshot) {
+  Widget _clientIsReady(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.hasData) {
+      return FutureBuilder<bool>(
+        future: _clientService.hasDeviceKey(),
+        builder: _hasDeviceKey,
+      );
+    } else if (snapshot.hasError) {
+      return Center(
+        child: HintText(
+          'error while starting up client: ${snapshot.error}',
+          maxLines: 4,
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else {
+      return Column(
+        children: const [
+          CircularProgressIndicator(),
+          SizedBox(height: 20),
+          HintText('Starting up client ...'),
+        ],
+      );
+    }
+  }
+
+  Widget _hasDeviceKey(BuildContext context, AsyncSnapshot<bool> snapshot) {
+    // TODO(shekohex): handle error state
+    if (snapshot.hasData && snapshot.data) {
+      // TODO(shekohex): handle locked account
+      ExtendedNavigator.root.pushMainScreen();
+      return const SizedBox();
+    } else {
       return Column(
         children: [
           Button(
@@ -71,22 +100,6 @@ class _IntroScreenState extends State<IntroScreen> {
               ExtendedNavigator.root.pushRecoverAccountStepOneScreen();
             },
           ),
-        ],
-      );
-    } else if (snapshot.hasError) {
-      return Center(
-        child: HintText(
-          'error while starting up client: ${snapshot.error}',
-          maxLines: 4,
-          textAlign: TextAlign.center,
-        ),
-      );
-    } else {
-      return Column(
-        children: const [
-          CircularProgressIndicator(),
-          SizedBox(height: 20),
-          HintText('Starting up client ...'),
         ],
       );
     }
