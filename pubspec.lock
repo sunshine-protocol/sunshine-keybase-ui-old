@@ -7,14 +7,14 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0"
+    version: "5.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.39.10"
+    version: "0.39.12"
   archive:
     dependency: transitive
     description:
@@ -84,7 +84,7 @@ packages:
       name: build_resolvers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.9"
+    version: "1.3.10"
   build_runner:
     dependency: "direct dev"
     description:
@@ -208,7 +208,7 @@ packages:
       name: flutter_screenutil
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "2.2.0"
   flutter_svg:
     dependency: transitive
     description:
@@ -295,14 +295,14 @@ packages:
       name: injectable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.0+1"
   injectable_generator:
     dependency: "direct dev"
     description:
       name: injectable_generator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.5"
+    version: "0.4.1"
   intl:
     dependency: "direct main"
     description:
@@ -421,7 +421,7 @@ packages:
       name: path_provider_linux
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1+1"
+    version: "0.0.1+2"
   path_provider_macos:
     dependency: transitive
     description:

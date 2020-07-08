@@ -10,7 +10,6 @@ class _BlankScreenState extends State<BlankScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(
-      context,
       width: 375,
       height: 812,
       allowFontScaling: true,
