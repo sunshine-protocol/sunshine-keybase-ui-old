@@ -2,12 +2,14 @@
 CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 CARGO_MAKE_WORKSPACE_INCLUDE_MEMBERS = ["native/identity-client"]
 ANDROID_PLATFORM_VERSION = "28"
+LIB_OUT_DIR = "debug"
 DEV = true
 RELEASE = false
 
 [env.release]
 RELEASE = true
 DEV = false
+LIB_OUT_DIR = "release"
 
 [tasks.test-flow]
 disabled = true
@@ -41,7 +43,7 @@ script_runner = "@duckscript"
 condition = { platforms = ["mac"] }
 script = [
     """
-    cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/universal/debug/lib${CARGO_MAKE_CRATE_FS_NAME}.a \
+    cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/universal/${LIB_OUT_DIR}/lib${CARGO_MAKE_CRATE_FS_NAME}.a \
     ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/ios/lib${CARGO_MAKE_CRATE_FS_NAME}.a
     """,
     """
@@ -161,7 +163,7 @@ private = true
 script_runner = "@duckscript"
 script = [
     """
-    cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/aarch64-linux-android/debug/lib${CARGO_MAKE_CRATE_FS_NAME}.so \
+    cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/aarch64-linux-android/${LIB_OUT_DIR}/lib${CARGO_MAKE_CRATE_FS_NAME}.so \
     ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/arm64-v8a/lib${CARGO_MAKE_CRATE_FS_NAME}.so
     """,
 ]
@@ -171,7 +173,7 @@ private = true
 script_runner = "@duckscript"
 script = [
   """
-  cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/armv7-linux-androideabi/debug/lib${CARGO_MAKE_CRATE_FS_NAME}.so \
+  cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/armv7-linux-androideabi/${LIB_OUT_DIR}/lib${CARGO_MAKE_CRATE_FS_NAME}.so \
   ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/armeabi-v7a/lib${CARGO_MAKE_CRATE_FS_NAME}.so
   """,
 ]
@@ -181,7 +183,7 @@ private = true
 script_runner = "@duckscript"
 script = [
     """
-    cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/i686-linux-android/debug/lib${CARGO_MAKE_CRATE_FS_NAME}.so \
+    cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/i686-linux-android/${LIB_OUT_DIR}/lib${CARGO_MAKE_CRATE_FS_NAME}.so \
     ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/x86/lib${CARGO_MAKE_CRATE_FS_NAME}.so
     """,
 ]
