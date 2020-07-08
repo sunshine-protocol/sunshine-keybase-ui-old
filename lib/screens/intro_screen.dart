@@ -7,11 +7,9 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
-  AccountService _accountService;
   @override
   void initState() {
     super.initState();
-    _accountService = GetIt.I.get<AccountService>();
   }
 
   @override
@@ -42,7 +40,10 @@ class _IntroScreenState extends State<IntroScreen> {
           ),
           SizedBox(height: 145.h.toDouble()),
           FutureBuilder<bool>(
-            future: _accountService.hasDeviceKey(),
+            future: Future.delayed(
+              const Duration(milliseconds: 1500),
+              () => true,
+            ),
             builder: _startUpClient,
           ),
         ],

@@ -12,7 +12,7 @@ Future main() async {
 }
 
 Future _setup() async {
-  await configure();
+  await configureDependencies();
   Intl.defaultLocale = 'en_US';
   // other pre-start setup goes here
 }
