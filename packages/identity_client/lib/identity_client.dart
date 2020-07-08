@@ -10,14 +10,22 @@ import 'constants.dart' as ffi;
 import 'ffi.dart' as ffi;
 
 class IdentityClient {
-  IdentityClient({@required Directory root}) {
+  IdentityClient({@required Directory root}) : _root = root {
     ffi.store_dart_post_cobject(NativeApi.postCObject);
-    final path = Utf8.toUtf8(root.path);
+  }
+
+  bool get isReady => _isReady;
+
+  final Directory _root;
+  bool _isReady = false;
+
+  Future<bool> startUpClient() {
+    final path = Utf8.toUtf8(_root.path);
     final completer = Completer<int>();
     final port = singleCompletePort(completer);
     final result = ffi.client_init(port.nativePort, path);
     assert(result == ffi.ok);
-    _clientInitOkay(completer.future);
+    return _clientInitOkay(completer.future);
   }
 
   Future<bool> lock() {
@@ -38,15 +46,24 @@ class IdentityClient {
   }
 
   Future<bool> hasDeviceKey() {
-    final completer = Completer<int>();
+    final completer = Completer<bool>();
     final port = singleCompletePort(completer);
     final result = ffi.client_has_device_key(port.nativePort);
     assert(result == ffi.ok);
-    return completer.future.then((value) => value == 1);
+    return completer.future.then((value) => value);
   }
 
-  Future<void> _clientInitOkay(FutureOr<int> f) async {
+  Future<bool> _clientInitOkay(FutureOr<int> f) async {
+    final start = DateTime.now();
     final res = await f;
-    assert(res == ffi.ok);
+    final end = DateTime.now();
+    final elapsed = end.difference(start);
+    print(
+      'Client Fully Sync in:\n'
+      '\t=> ${elapsed.inMinutes} min\n'
+      '\t=> ${elapsed.inSeconds} sec\n',
+    );
+    _isReady = res == ffi.ok;
+    return res == ffi.ok;
   }
 }

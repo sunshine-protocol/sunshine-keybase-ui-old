@@ -5,16 +5,10 @@ use sunshine_client::{build_client, Error, Runtime};
 async fn setup_client(root: &str) -> Result<Client, Error> {
     #[cfg(target_os = "android")]
     {
-        use android_logger::{Config, FilterBuilder};
+        use android_logger::Config;
         use log::Level;
         android_logger::init_once(
-            Config::default().with_min_level(Level::Debug).with_filter(
-                FilterBuilder::new()
-                    .parse(
-                        "identity-client,sunshine-identity-ffi,sunshine-client,debug",
-                    )
-                    .build(),
-            ),
+            Config::default().with_min_level(Level::Info),
         );
     }
     let root = PathBuf::from(root);

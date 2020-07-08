@@ -7,8 +7,10 @@ class AccountService {
       : _identityClientService = identityClientService;
 
   final IdentityClientService _identityClientService;
-
-  Future<bool> hasDeviceKey() {
+  Future<bool> hasDeviceKey() async {
+    if (!_identityClientService.isReady) {
+      await _identityClientService.startUpClient();
+    }
     return _identityClientService.hasDeviceKey();
   }
 }
