@@ -1,16 +1,12 @@
-import 'package:identity/services/services.dart';
 import 'package:injectable/injectable.dart';
+
+import 'client/client_service.dart';
 
 @lazySingleton
 class AccountService {
-  AccountService({IdentityClientService identityClientService})
-      : _identityClientService = identityClientService;
+  AccountService({ClientService clientService})
+      : _clientService = clientService;
 
-  final IdentityClientService _identityClientService;
-  Future<bool> hasDeviceKey() async {
-    if (!_identityClientService.isReady) {
-      await _identityClientService.startUpClient();
-    }
-    return _identityClientService.hasDeviceKey();
-  }
+  // ignore: unused_field
+  final ClientService _clientService;
 }

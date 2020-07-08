@@ -12,9 +12,12 @@ import 'ffi.dart' as ffi;
 class IdentityClient {
   IdentityClient({@required Directory root}) : _root = root {
     ffi.store_dart_post_cobject(NativeApi.postCObject);
+    startUpClient();
   }
 
-  bool get isReady => _isReady;
+  Future<bool> get ready => Future.doWhile(() => !_isReady).then(
+        (_) => true,
+      );
 
   final Directory _root;
   bool _isReady = false;
