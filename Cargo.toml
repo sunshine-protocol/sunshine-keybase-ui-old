@@ -8,3 +8,5 @@ codegen-units = 1
 
 [patch.crates-io]
 sc-service = { git = "https://github.com/paritytech/substrate" }
+frame-metadata = { git = "https://github.com/paritytech/substrate" }
+frame-support = { git = "https://github.com/paritytech/substrate" }
