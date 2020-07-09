@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 import 'service.dart';
 
-class GithubIdentity extends IdentityService {
+class GithubIdentity extends SocialIdentityService {
   GithubIdentity({
     @required String username,
     @required String proofUrl,

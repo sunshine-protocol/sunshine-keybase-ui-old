@@ -15,7 +15,7 @@ class _IdentitesScreenBody extends StatelessWidget {
   const _IdentitesScreenBody({
     Key key,
   }) : super(key: key);
-  final String _githubIdentity = 'shekohex';
+  final String _githubIdentity = null;
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -49,11 +49,12 @@ class _IdentitesScreenBody extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 5.h.toDouble()),
-              Divider(
-                thickness: 2,
-                indent: ScreenUtil.screenWidth / 8,
-                endIndent: ScreenUtil.screenWidth / 8,
-                color: Colors.black54,
+              SizedBox(
+                width: 100.w.toDouble(),
+                child: Divider(
+                  thickness: 2,
+                  color: Colors.black54,
+                ),
               ),
               SizedBox(height: 20.h.toDouble()),
               if (_githubIdentity != null) ...[
@@ -152,7 +153,7 @@ class ProveIdentityInstractionsScreen extends StatelessWidget {
             const SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Input(
-                initialValue: instractionsForDemo,
+                initialValue: '',
                 maxLines: 16,
                 readOnly: true,
               ),
@@ -327,23 +328,3 @@ class RevokeIdentityDoneScreen extends StatelessWidget {
     );
   }
 }
-
-const instractionsForDemo = '''
-### substrate identity proof
-
-I hereby claim:
-
-  * I am shekohex on github.
-  * I am 0 on the substrate chain with genesis hash mzyTJZVm7IXDUBeZwyWk6rG1YGIt8BQnNzrshKJCalYI.
-  * I have a public key 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY valid at block with hash mfBFseDYNX31Poqei8A/9teYmxJIj4PFROoKLKEPaStE.
-
-To claim this, I am signing this object:
-
-{"block":[124,17,108,120,54,13,95,125,79,162,167,162,240,15,253,181,230,38,196,146,35,224,241,81,58,130,139,40,67,218,74,209],"body":{"Ownership":[{"Github":["dvc94ch"]}]},"ctime":1591448931056,"expire_in":18446744073709551615,"genesis":[207,36,201,101,89,187,33,112,212,5,230,112,201,105,58,172,109,88,24,139,124,5,9,205,206,187,33,40,144,154,149,130],"prev":null,"public":"5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY","seqno":1,"uid":0}
-
-with the key 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY, yielding the signature:
-
-mAU6Gon1dqctnS/zPKHd9gWFvEJBqADvgYQy0OFuamA5CwVQk7papR0xBq8DijRqSXVGpJtNFmy7aYJk5cGLxv4c
-
-And finally, I am proving ownership of the github account by posting this as a gist.
-''';

@@ -18,6 +18,6 @@ class Account {
   final String uid;
   final AccountState state;
   final List<Device> devices;
-  final List<IdentityService> identities;
+  final List<SocialIdentityService> identities;
   Device get currentDevice => devices.firstWhere((d) => d.isCurrentDevice);
 }

@@ -1,7 +1,7 @@
-abstract class IdentityService {
+abstract class SocialIdentityService {
   String get username;
   String get serviceName;
   String get proofUrl;
   String get display => '$username@$serviceName';
-  bool get isProoved => username != null;
+  bool get isProved => username != null;
 }
