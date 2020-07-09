@@ -5,3 +5,18 @@ members = ["native/*"]
 lto = true
 panic = 'abort'
 codegen-units = 1
+
+[patch.crates-io]
+frame-metadata = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+frame-support = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+frame-system = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+pallet-balances = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+pallet-indices = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-core = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-io = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-keyring = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-rpc = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-runtime = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-std = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-transaction-pool = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
+sp-version = { git = "https://github.com/4meta5/substrate/", branch = "ios-ignore-sysinfo" }
