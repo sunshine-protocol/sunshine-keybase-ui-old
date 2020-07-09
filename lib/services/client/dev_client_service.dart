@@ -8,13 +8,14 @@ import 'client_service.dart';
 class DevClientService implements ClientService {
   bool _isLocked = false;
   String _uid;
+  String _deviceId;
   String _balance;
   String _password;
   final Map<String, Set<String>> _identities = {};
   final Map<String, Set<String>> _devices = {};
   @override
-  Future<String> accountId() async {
-    return _uid;
+  Future<String> deviceId() async {
+    return _deviceId;
   }
 
   @override
@@ -67,7 +68,9 @@ class DevClientService implements ClientService {
       {String suri, String paperKey}) async {
     _password = password;
     _uid = '1';
-    _identities[_uid] = {};
+    _deviceId = '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh';
+    _identities[_uid] = {'5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh'};
+    _devices[_uid] = {};
     return _uid;
   }
 
@@ -109,6 +112,11 @@ class DevClientService implements ClientService {
   @override
   Future<bool> transfer(String id, String amount) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<String> uid() async {
+    return _uid;
   }
 }
 

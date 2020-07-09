@@ -151,8 +151,10 @@ class Router extends RouterBase {
       );
     },
     RecoverAccountStepTwoScreen: (RouteData data) {
+      var args =
+          data.getArgs<RecoverAccountStepTwoScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => RecoverAccountStepTwoScreen(),
+        builder: (context) => RecoverAccountStepTwoScreen(args.paperKey),
         settings: data,
       );
     },
@@ -276,8 +278,13 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
   Future<dynamic> pushRecoverAccountStepOneScreen() =>
       pushNamed<dynamic>(Routes.recoverAccountStepOneScreen);
 
-  Future<dynamic> pushRecoverAccountStepTwoScreen() =>
-      pushNamed<dynamic>(Routes.recoverAccountStepTwoScreen);
+  Future<dynamic> pushRecoverAccountStepTwoScreen({
+    @required String paperKey,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.recoverAccountStepTwoScreen,
+        arguments: RecoverAccountStepTwoScreenArguments(paperKey: paperKey),
+      );
 
   Future<dynamic> pushRecoverAccountDoneScreen() =>
       pushNamed<dynamic>(Routes.recoverAccountDoneScreen);
@@ -325,4 +332,14 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
 
   Future<dynamic> pushRevokeIdentityDoneScreen() =>
       pushNamed<dynamic>(Routes.revokeIdentityDoneScreen);
+}
+
+// *************************************************************************
+// Arguments holder classes
+// **************************************************************************
+
+//RecoverAccountStepTwoScreen arguments holder class
+class RecoverAccountStepTwoScreenArguments {
+  final String paperKey;
+  RecoverAccountStepTwoScreenArguments({@required this.paperKey});
 }

@@ -1,10 +1,10 @@
 class Device {
-  Device({
+  const Device({
     this.id,
-    this.currentDevice,
+    this.currentDevice = false,
   });
   final String id;
-  bool currentDevice;
+  final bool currentDevice;
 
   bool get isCurrentDevice => currentDevice;
 }

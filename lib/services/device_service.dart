@@ -5,7 +5,9 @@ import 'client/client_service.dart';
 @lazySingleton
 class DeviceService {
   DeviceService({ClientService clientService}) : _clientService = clientService;
-
-  // ignore: unused_field
   final ClientService _clientService;
+
+  Future<bool> hasDeviceKey() {
+    return _clientService.hasDeviceKey();
+  }
 }

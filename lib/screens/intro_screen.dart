@@ -7,10 +7,12 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
+  DeviceService _deviceService;
   ClientService _clientService;
   @override
   void initState() {
     super.initState();
+    _deviceService = GetIt.I.get<DeviceService>();
     _clientService = GetIt.I.get<ClientService>();
   }
 
@@ -53,7 +55,7 @@ class _IntroScreenState extends State<IntroScreen> {
   Widget _clientIsReady(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.hasData) {
       return FutureBuilder<bool>(
-        future: _clientService.hasDeviceKey(),
+        future: _deviceService.hasDeviceKey(),
         builder: _hasDeviceKey,
       );
     } else if (snapshot.hasError) {
@@ -79,7 +81,9 @@ class _IntroScreenState extends State<IntroScreen> {
     // TODO(shekohex): handle error state
     if (snapshot.hasData && snapshot.data) {
       // TODO(shekohex): handle locked account
-      ExtendedNavigator.root.pushMainScreen();
+      ExtendedNavigator.root
+        ..pop()
+        ..pushMainScreen();
       return const SizedBox();
     } else {
       return Column(
@@ -89,7 +93,9 @@ class _IntroScreenState extends State<IntroScreen> {
             text: 'Generate Account',
             onPressed: () {
               // step one: Device name, we skip that for now.
-              ExtendedNavigator.root.pushGenerateAccountStepTwoScreen();
+              ExtendedNavigator.root
+                ..pop()
+                ..pushGenerateAccountStepTwoScreen();
             },
           ),
           SizedBox(height: 20.h.toDouble()),
@@ -97,7 +103,9 @@ class _IntroScreenState extends State<IntroScreen> {
             variant: ButtonVariant.primary,
             text: 'Restore my account',
             onPressed: () {
-              ExtendedNavigator.root.pushRecoverAccountStepOneScreen();
+              ExtendedNavigator.root
+                ..pop()
+                ..pushRecoverAccountStepOneScreen();
             },
           ),
         ],

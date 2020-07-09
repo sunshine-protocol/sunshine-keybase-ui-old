@@ -2,7 +2,8 @@ import 'package:identity/models/models.dart';
 
 abstract class ClientService {
   Future<bool> get ready;
-  Future<String> accountId();
+  Future<String> deviceId();
+  Future<String> uid();
   Future<bool> lock();
   Future<bool> unlock(String password);
   Future<bool> hasDeviceKey();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:identity/identity.dart';
+import 'package:identity/models/models.dart';
 
 class RecoverAccountStepOneScreen extends StatefulWidget {
   @override
@@ -9,6 +10,14 @@ class RecoverAccountStepOneScreen extends StatefulWidget {
 
 class _RecoverAccountStepOneScreenState
     extends State<RecoverAccountStepOneScreen> {
+  TextEditingController _paperKeyController;
+
+  @override
+  void initState() {
+    super.initState();
+    _paperKeyController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +28,10 @@ class _RecoverAccountStepOneScreenState
         children: [
           const HeaderText('Enter your device paper key'),
           SizedBox(height: 30.h.toDouble()),
-          const Input(
+          Input(
             maxLines: 4,
             minLines: 4,
+            controller: _paperKeyController,
             hintText: 'mandate robust earth scan shrimp second pipe pitch'
                 ' eternal snap glare tooth bean crucial river bar'
                 ' crash nice sorry laundry oppose filter aunt swear',
@@ -34,7 +44,10 @@ class _RecoverAccountStepOneScreenState
             text: 'Next',
             variant: ButtonVariant.success,
             onPressed: () {
-              ExtendedNavigator.root.pushRecoverAccountStepTwoScreen();
+              FocusScope.of(context).requestFocus(FocusNode());
+              ExtendedNavigator.root.pushRecoverAccountStepTwoScreen(
+                paperKey: _paperKeyController.text,
+              );
             },
           ),
           SizedBox(height: 15.h.toDouble())
@@ -45,6 +58,8 @@ class _RecoverAccountStepOneScreenState
 }
 
 class RecoverAccountStepTwoScreen extends StatefulWidget {
+  const RecoverAccountStepTwoScreen(this.paperKey);
+  final String paperKey;
   @override
   _RecoverAccountStepTwoScreenState createState() =>
       _RecoverAccountStepTwoScreenState();
@@ -52,6 +67,18 @@ class RecoverAccountStepTwoScreen extends StatefulWidget {
 
 class _RecoverAccountStepTwoScreenState
     extends State<RecoverAccountStepTwoScreen> {
+  KeyService _keyService;
+  TextEditingController _passwordController;
+  TextEditingController _passwordAgainController;
+  String _errText;
+  @override
+  void initState() {
+    super.initState();
+    _keyService = GetIt.I.get<KeyService>();
+    _passwordController = TextEditingController();
+    _passwordAgainController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,14 +92,32 @@ class _RecoverAccountStepTwoScreenState
             child: HeaderText('Add a password to secure your account'),
           ),
           SizedBox(height: 30.h.toDouble()),
-          const Input(
+          Input(
             hintText: 'Password',
             obscureText: true,
+            errorText: _errText,
+            controller: _passwordController,
+            onChanged: (v) {
+              if (_errText != null) {
+                setState(() {
+                  _errText = null;
+                });
+              }
+            },
           ),
           SizedBox(height: 14.h.toDouble()),
-          const Input(
+          Input(
             hintText: 'Password Again',
             obscureText: true,
+            errorText: _errText,
+            controller: _passwordAgainController,
+            onChanged: (v) {
+              if (_errText != null) {
+                setState(() {
+                  _errText = null;
+                });
+              }
+            },
           ),
           SizedBox(height: 30.h.toDouble()),
           const Center(
@@ -93,7 +138,24 @@ class _RecoverAccountStepTwoScreenState
     );
   }
 
-  void _restoreAccount() {
+  Future<void> _restoreAccount() async {
+    final isLessThan8 = _passwordController.text.length < 8 ||
+        _passwordAgainController.text.length < 8;
+    if (isLessThan8) {
+      setState(() {
+        _errText = 'Please choose a password that at least 8 characters';
+      });
+      return;
+    }
+    if (_passwordController.text != _passwordAgainController.text) {
+      setState(() {
+        _errText = 'Passwords dose not match';
+      });
+      return;
+    }
+    // hide keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
+    // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -101,8 +163,12 @@ class _RecoverAccountStepTwoScreenState
         loadingMessage: 'we are restoring your account',
       ),
     );
+    await _keyService.restore(
+      _passwordController.text,
+      widget.paperKey,
+    );
     Future.delayed(
-      const Duration(seconds: 2),
+      const Duration(milliseconds: 100),
       () {
         ExtendedNavigator.root
           ..popPages(1)
@@ -113,46 +179,43 @@ class _RecoverAccountStepTwoScreenState
 }
 
 class RecoverAccountDoneScreen extends StatelessWidget {
+  final _accountService = GetIt.I.get<AccountService>();
   @override
   Widget build(BuildContext context) {
+    final f = _accountService.currentAccount();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(height: 100.h.toDouble()),
-          Center(
-            child: Text(
-              'Your Account has been created\n'
-              'Here is your account id',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.ssp.toDouble(),
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
+          const HeaderText(
+            'Your Account has been restored\n'
+            'Here is your account id',
+          ),
+          SizedBox(height: 30.h.toDouble()),
+          FutureBuilder<Account>(
+            initialData: const Account(uid: '...'),
+            future: f,
+            builder: (context, snapshot) => Input(
+              hintText: snapshot.data.uid,
+              readOnly: true,
             ),
           ),
           SizedBox(height: 30.h.toDouble()),
-          const Input(
-            hintText: '1012120',
-            readOnly: true,
-          ),
+          const HeaderText('That\'s your device id in your account'),
           SizedBox(height: 30.h.toDouble()),
-          Center(
-            child: Text(
-              'That\'s your device id in your account',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.ssp.toDouble(),
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
+          FutureBuilder<Account>(
+            initialData: const Account(devices: [
+              Device(
+                id: '...',
+                currentDevice: true,
+              )
+            ]),
+            future: f,
+            builder: (context, snapshot) => Input(
+              hintText: snapshot.data.currentDevice.id,
+              readOnly: true,
             ),
-          ),
-          SizedBox(height: 30.h.toDouble()),
-          const Input(
-            hintText: '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh',
-            readOnly: true,
           ),
           SizedBox(height: 30.h.toDouble()),
           const Center(
@@ -161,6 +224,7 @@ class RecoverAccountDoneScreen extends StatelessWidget {
               child: HintText(
                 'you could access these information '
                 'in your profile page.',
+                maxLines: 2,
               ),
             ),
           ),
@@ -173,7 +237,8 @@ class RecoverAccountDoneScreen extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..popPages(1)
+                ..pop()
+                ..pop()
                 ..pushMainScreen();
             },
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:identity/identity.dart';
+import 'package:identity/models/models.dart';
 
 class GenerateAccountStepOneScreen extends StatefulWidget {
   @override
@@ -54,6 +55,18 @@ class GenerateAccountStepTwoScreen extends StatefulWidget {
 
 class _GenerateAccountStepTwoScreenState
     extends State<GenerateAccountStepTwoScreen> {
+  KeyService _keyService;
+  TextEditingController _passwordController;
+  TextEditingController _passwordAgainController;
+  String _errText;
+  @override
+  void initState() {
+    super.initState();
+    _keyService = GetIt.I.get<KeyService>();
+    _passwordController = TextEditingController();
+    _passwordAgainController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,14 +80,32 @@ class _GenerateAccountStepTwoScreenState
             child: HeaderText('Add a password to secure your account'),
           ),
           SizedBox(height: 30.h.toDouble()),
-          const Input(
+          Input(
             hintText: 'Password',
             obscureText: true,
+            errorText: _errText,
+            controller: _passwordController,
+            onChanged: (v) {
+              if (_errText != null) {
+                setState(() {
+                  _errText = null;
+                });
+              }
+            },
           ),
           SizedBox(height: 14.h.toDouble()),
-          const Input(
+          Input(
             hintText: 'Password Again',
             obscureText: true,
+            errorText: _errText,
+            controller: _passwordAgainController,
+            onChanged: (v) {
+              if (_errText != null) {
+                setState(() {
+                  _errText = null;
+                });
+              }
+            },
           ),
           SizedBox(height: 30.h.toDouble()),
           const Center(
@@ -95,19 +126,37 @@ class _GenerateAccountStepTwoScreenState
     );
   }
 
-  void _generateAccount() {
+  Future<void> _generateAccount() async {
+    final isLessThan8 = _passwordController.text.length < 8 ||
+        _passwordAgainController.text.length < 8;
+    if (isLessThan8) {
+      setState(() {
+        _errText = 'Please choose a password that at least 8 characters';
+      });
+      return;
+    }
+    if (_passwordController.text != _passwordAgainController.text) {
+      setState(() {
+        _errText = 'Passwords dose not match';
+      });
+      return;
+    }
+    // hide keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
+    // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => const LoadingView(
-        loadingMessage: 'We are creating account for you',
+        loadingMessage: 'we are creating account for you',
       ),
     );
-    Future.delayed(
-      const Duration(seconds: 2),
+    await _keyService.generate(_passwordController.text);
+    await Future.delayed(
+      const Duration(milliseconds: 100),
       () {
         ExtendedNavigator.root
-          ..popPages(1)
+          ..popPages(2)
           ..pushGenerateAccountDoneScreen();
       },
     );
@@ -115,8 +164,10 @@ class _GenerateAccountStepTwoScreenState
 }
 
 class GenerateAccountDoneScreen extends StatelessWidget {
+  final _accountService = GetIt.I.get<AccountService>();
   @override
   Widget build(BuildContext context) {
+    final f = _accountService.currentAccount();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -127,16 +178,29 @@ class GenerateAccountDoneScreen extends StatelessWidget {
             'Here is your account id',
           ),
           SizedBox(height: 30.h.toDouble()),
-          const Input(
-            hintText: '1012120',
-            readOnly: true,
+          FutureBuilder<Account>(
+            initialData: const Account(uid: '...'),
+            future: f,
+            builder: (context, snapshot) => Input(
+              hintText: snapshot.data.uid,
+              readOnly: true,
+            ),
           ),
           SizedBox(height: 30.h.toDouble()),
           const HeaderText('That\'s your device id in your account'),
           SizedBox(height: 30.h.toDouble()),
-          const Input(
-            hintText: '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh',
-            readOnly: true,
+          FutureBuilder<Account>(
+            initialData: const Account(devices: [
+              Device(
+                id: '...',
+                currentDevice: true,
+              )
+            ]),
+            future: f,
+            builder: (context, snapshot) => Input(
+              hintText: snapshot.data.currentDevice.id,
+              readOnly: true,
+            ),
           ),
           SizedBox(height: 30.h.toDouble()),
           const Center(
@@ -145,6 +209,7 @@ class GenerateAccountDoneScreen extends StatelessWidget {
               child: HintText(
                 'you could access these information '
                 'in your profile page.',
+                maxLines: 2,
               ),
             ),
           ),
@@ -157,7 +222,7 @@ class GenerateAccountDoneScreen extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..popPages(1)
+                ..popPages(2)
                 ..pushMainScreen();
             },
           ),

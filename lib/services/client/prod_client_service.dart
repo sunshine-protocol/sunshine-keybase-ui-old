@@ -21,7 +21,7 @@ class ProdClientService implements ClientService {
   Future<bool> get ready => _identityClientService.ready;
 
   @override
-  Future<String> accountId() {
+  Future<String> deviceId() {
     throw UnimplementedError();
   }
 
@@ -82,6 +82,11 @@ class ProdClientService implements ClientService {
 
   @override
   Future<bool> transfer(String id, String amount) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> uid() {
     throw UnimplementedError();
   }
 }
