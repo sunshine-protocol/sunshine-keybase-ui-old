@@ -5035,8 +5035,7 @@ dependencies = [
 [[package]]
 name = "sc-service"
 version = "0.8.0-rc4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19c43b52b33be16215d84cdedf4b5917321e8fef39b6b12aa62a7ab073c08041"
+source = "git+https://github.com/4meta5/substrate?branch=add-ios-on-rc4#a47fc39154bf6b012439940c611535d8f0db1d7c"
 dependencies = [
  "derive_more",
  "directories",
@@ -6533,9 +6532,9 @@ dependencies = [
 
 [[package]]
 name = "sysinfo"
-version = "0.13.4"
+version = "0.14.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1cac193374347e7c263c5f547524f36ff8ec6702d56c8799c8331d26dffe8c1e"
+checksum = "0526e09d1fc751071f617c5f5d427fd8e82ad48a5baabcb6762978e0e4cda058"
 dependencies = [
  "cfg-if",
  "doc-comment",
