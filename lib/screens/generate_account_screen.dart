@@ -222,7 +222,8 @@ class GenerateAccountDoneScreen extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..popPages(2)
+                ..pop()
+                ..pop()
                 ..pushMainScreen();
             },
           ),

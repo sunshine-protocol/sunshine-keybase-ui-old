@@ -42,6 +42,18 @@
 int32_t client_add_paperkey(int64_t port);
 
 /**
+ * Get account balance
+ */
+int32_t client_balance(int64_t port, const char *identifier);
+
+/**
+ * Get account id
+ */
+int32_t client_current_device_id(int64_t port);
+
+int32_t client_faucet_mint(int64_t port, const char *identifier);
+
+/**
  * Check if the current client has a device key already or not
  */
 int32_t client_has_device_key(int64_t port);
@@ -87,9 +99,9 @@ int32_t client_prove_identity(int64_t port, int32_t service, const char *id);
 int32_t client_resolve_uid(int64_t port, const char *identifier);
 
 /**
- * Get account id
+ * transfer to another account
  */
-int32_t client_signer_account_id(int64_t port);
+int32_t client_transfer(int64_t port, const char *identifier, u128 amount);
 
 /**
  * UnLock the client

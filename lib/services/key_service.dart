@@ -18,8 +18,11 @@ class KeyService {
   }
 
   Future<Account> generate(String password) async {
-    final uid = await _clientService.setDeviceKey(password);
-    final deviceId = await _clientService.deviceId();
+    final deviceId = await _clientService.setDeviceKey(password);
+    print('device ID: $deviceId');
+    final amount = await _clientService.mint(deviceId);
+    print('Account minted with: $amount');
+    final uid = await _clientService.uid();
     final device = Device(id: deviceId, currentDevice: true);
     return Account(devices: [device], uid: uid, identities: []);
   }

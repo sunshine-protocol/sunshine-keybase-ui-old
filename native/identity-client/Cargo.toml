@@ -11,8 +11,9 @@ crate-type = ["cdylib", "staticlib"]
 log = "0.4"
 
 [dependencies.ffi]
-version = "0.1.1"
+version = "0.1.3"
 package = "sunshine-identity-ffi"
+features = ["faucet"]
 
 [dependencies.sunshine-client]
 git = "https://github.com/sunshine-protocol/sunshine.git"
@@ -21,3 +22,7 @@ features = ["light"]
 
 [target.'cfg(target_os = "android")'.dependencies]
 android_logger = "0.8"
+
+[features]
+default = ["faucet"]
+faucet = []

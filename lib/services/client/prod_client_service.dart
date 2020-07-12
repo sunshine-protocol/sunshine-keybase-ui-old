@@ -11,7 +11,6 @@ class ProdClientService implements ClientService {
   ProdClientService({IdentityClientService identityClientService})
       : _identityClientService = identityClientService;
   final IdentityClientService _identityClientService;
-
   @override
   Future<bool> hasDeviceKey() {
     return _identityClientService.hasDeviceKey();
@@ -21,8 +20,8 @@ class ProdClientService implements ClientService {
   Future<bool> get ready => _identityClientService.ready;
 
   @override
-  Future<String> deviceId() {
-    throw UnimplementedError();
+  Future<String> deviceId() async {
+    return _identityClientService.deviceId();
   }
 
   @override
@@ -31,13 +30,13 @@ class ProdClientService implements ClientService {
   }
 
   @override
-  Future<List<String>> identities(String uid) {
-    throw UnimplementedError();
+  Future<List<String>> identities(String uid) async {
+    return [];
   }
 
   @override
   Future<bool> lock() {
-    throw UnimplementedError();
+    return _identityClientService.lock();
   }
 
   @override
@@ -46,13 +45,18 @@ class ProdClientService implements ClientService {
   }
 
   @override
-  Future<String> setDeviceKey(String password, {String suri, String paperKey}) {
-    throw UnimplementedError();
+  Future<String> setDeviceKey(String password,
+      {String suri, String paperKey}) async {
+    return _identityClientService.setDeviceKey(
+      password,
+      suri: suri,
+      paperKey: paperKey,
+    );
   }
 
   @override
   Future<bool> unlock(String password) {
-    throw UnimplementedError();
+    return _identityClientService.unlock(password);
   }
 
   @override
@@ -66,8 +70,8 @@ class ProdClientService implements ClientService {
   }
 
   @override
-  Future<List<String>> devices() {
-    throw UnimplementedError();
+  Future<List<String>> devices() async {
+    return [];
   }
 
   @override
@@ -81,12 +85,18 @@ class ProdClientService implements ClientService {
   }
 
   @override
-  Future<bool> transfer(String id, String amount) {
+  Future<bool> transfer(String id, int amount) {
     throw UnimplementedError();
   }
 
   @override
-  Future<String> uid() {
-    throw UnimplementedError();
+  Future<String> uid() async {
+    final did = await deviceId();
+    return _identityClientService.uid(did);
+  }
+
+  @override
+  Future<int> mint(String id) {
+    return _identityClientService.mint(id);
   }
 }

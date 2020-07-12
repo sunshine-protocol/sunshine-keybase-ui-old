@@ -26,6 +26,54 @@ typedef _client_add_paperkey_Dart = int Function(
   int port,
 );
 
+/// <p class="para-brief"> Get account balance</p>
+int client_balance(
+  int port,
+  Pointer<ffi.Utf8> identifier,
+) {
+  return _client_balance(port, identifier);
+}
+final _client_balance_Dart _client_balance = _dl.lookupFunction<_client_balance_C, _client_balance_Dart>('client_balance');
+typedef _client_balance_C = Int32 Function(
+  Int64 port,
+  Pointer<ffi.Utf8> identifier,
+);
+typedef _client_balance_Dart = int Function(
+  int port,
+  Pointer<ffi.Utf8> identifier,
+);
+
+/// <p class="para-brief"> Get account id</p>
+int client_current_device_id(
+  int port,
+) {
+  return _client_current_device_id(port);
+}
+final _client_current_device_id_Dart _client_current_device_id = _dl.lookupFunction<_client_current_device_id_C, _client_current_device_id_Dart>('client_current_device_id');
+typedef _client_current_device_id_C = Int32 Function(
+  Int64 port,
+);
+typedef _client_current_device_id_Dart = int Function(
+  int port,
+);
+
+/// C function `client_faucet_mint`.
+int client_faucet_mint(
+  int port,
+  Pointer<ffi.Utf8> identifier,
+) {
+  return _client_faucet_mint(port, identifier);
+}
+final _client_faucet_mint_Dart _client_faucet_mint = _dl.lookupFunction<_client_faucet_mint_C, _client_faucet_mint_Dart>('client_faucet_mint');
+typedef _client_faucet_mint_C = Int32 Function(
+  Int64 port,
+  Pointer<ffi.Utf8> identifier,
+);
+typedef _client_faucet_mint_Dart = int Function(
+  int port,
+  Pointer<ffi.Utf8> identifier,
+);
+
 /// <p class="para-brief"> Check if the current client has a device key already or not</p>
 int client_has_device_key(
   int port,
@@ -148,18 +196,24 @@ typedef _client_resolve_uid_Dart = int Function(
   Pointer<ffi.Utf8> identifier,
 );
 
-/// <p class="para-brief"> Get account id</p>
-int client_signer_account_id(
+/// C function `client_transfer`.
+int client_transfer(
   int port,
+  Pointer<ffi.Utf8> identifier,
+  int amount,
 ) {
-  return _client_signer_account_id(port);
+  return _client_transfer(port, identifier, amount);
 }
-final _client_signer_account_id_Dart _client_signer_account_id = _dl.lookupFunction<_client_signer_account_id_C, _client_signer_account_id_Dart>('client_signer_account_id');
-typedef _client_signer_account_id_C = Int32 Function(
+final _client_transfer_Dart _client_transfer = _dl.lookupFunction<_client_transfer_C, _client_transfer_Dart>('client_transfer');
+typedef _client_transfer_C = Int32 Function(
   Int64 port,
+  Pointer<ffi.Utf8> identifier,
+  Int32 amount,
 );
-typedef _client_signer_account_id_Dart = int Function(
+typedef _client_transfer_Dart = int Function(
   int port,
+  Pointer<ffi.Utf8> identifier,
+  int amount,
 );
 
 /// <p class="para-brief"> UnLock the client</p>

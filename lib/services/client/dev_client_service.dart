@@ -110,13 +110,18 @@ class DevClientService implements ClientService {
   }
 
   @override
-  Future<bool> transfer(String id, String amount) {
+  Future<bool> transfer(String id, int amount) {
     throw UnimplementedError();
   }
 
   @override
   Future<String> uid() async {
     return _uid;
+  }
+
+  @override
+  Future<int> mint(String id) {
+    throw UnimplementedError();
   }
 }
 

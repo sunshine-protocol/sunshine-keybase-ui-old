@@ -14,6 +14,31 @@ LIB_OUT_DIR = "release"
 [tasks.test-flow]
 disabled = true
 
+[tasks.android-dev]
+description = "development android x86_64 emulator"
+category = "Build"
+dependencies = [
+  "pre-android",
+  "android-x86_64",
+  "android-x86_64-release",
+  "post-android-x86_64",
+  "cbindgen",
+  "dart-bindgen"
+  ]
+
+[tasks.android-arm]
+description = "build android ARM64 for actual device"
+category = "Build"
+dependencies = [
+  "pre-android",
+  "android-aarch64",
+  "android-aarch64-release",
+  "post-android-aarch64",
+  "cbindgen",
+  "dart-bindgen"
+  ]
+
+
 [tasks.build]
 description = "Runs the rust compiler."
 category = "Build"
@@ -66,6 +91,9 @@ dependencies = [
     "android-i686",
     "android-i686-release",
     "post-android-i686",
+    "android-x86_64",
+    "android-x86_64-release",
+    "post-android-x86_64",
 ]
 
 [tasks.android-aarch64]
@@ -104,6 +132,19 @@ args = [
   "${ANDROID_PLATFORM_VERSION}", 
   "--target", 
   "i686-linux-android", 
+  "build"
+  ]
+
+[tasks.android-x86_64]
+private = true
+condition = { env_true = ["DEV"] }
+command = "cargo"
+args = [
+  "ndk", 
+  "--platform", 
+  "${ANDROID_PLATFORM_VERSION}", 
+  "--target", 
+  "x86_64-linux-android", 
   "build"
   ]
 
@@ -149,6 +190,21 @@ args = [
   "--release"
   ]
 
+  
+[tasks.android-x86_64-release]
+private = true
+condition = { env_true = ["RELEASE"] }
+command = "cargo"
+args = [
+  "ndk", 
+  "--platform", 
+  "${ANDROID_PLATFORM_VERSION}", 
+  "--target", 
+  "x86_64-linux-android", 
+  "build",
+  "--release"
+  ]
+
 [tasks.pre-android]
 private = true
 script_runner = "@duckscript"
@@ -156,6 +212,7 @@ script = [
     "mkdir ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/arm64-v8a",
     "mkdir ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/armeabi-v7a",
     "mkdir ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/x86",
+    "mkdir ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/x86_64",
 ]
 
 [tasks.post-android-aarch64]
@@ -188,6 +245,16 @@ script = [
     """,
 ]
 
+
+[tasks.post-android-x86_64]
+private = true
+script_runner = "@duckscript"
+script = [
+    """
+    cp ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/x86_64-linux-android/${LIB_OUT_DIR}/lib${CARGO_MAKE_CRATE_FS_NAME}.so \
+    ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/android/src/main/jniLibs/x86_64/lib${CARGO_MAKE_CRATE_FS_NAME}.so
+    """,
+]
 
 [tasks.cbindgen]
 command = "cbindgen"

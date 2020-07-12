@@ -16,7 +16,8 @@ abstract class ClientService {
   Future<bool> addDevice(String id);
   Future<bool> revokeDevice(String id);
   Future<String> balance();
-  Future<bool> transfer(String id, String amount);
+  Future<bool> transfer(String id, int amount);
+  Future<int> mint(String id);
 }
 
 class ProveIdentityResult {

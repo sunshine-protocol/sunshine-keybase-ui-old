@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:identity/identity.dart';
+import 'package:identity/models/models.dart';
 
 class AccountScreen extends StatelessWidget {
+  final _accountService = GetIt.I.get<AccountService>();
   @override
   Widget build(BuildContext context) {
+    final f = _accountService.currentAccount();
     return Scaffold(
       appBar: const MyAppBar(title: 'Account', elevation: 1),
       body: ListView(
@@ -16,14 +19,31 @@ class AccountScreen extends StatelessWidget {
             title: 'UID',
             trailing: SizedBox(
               width: 60.w.toDouble(),
-              child: const HintText('000001'),
+              child: FutureBuilder<Account>(
+                initialData: const Account(uid: '...'),
+                future: f,
+                builder: (context, snapshot) => HintText(
+                  snapshot.data.uid ?? 'N/A',
+                ),
+              ),
             ),
           ),
           ListCell(
             title: 'Device ID',
             trailing: SizedBox(
               width: 120.w.toDouble(),
-              child: const HintText('5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh'),
+              child: FutureBuilder<Account>(
+                initialData: const Account(devices: [
+                  Device(
+                    id: '...',
+                    currentDevice: true,
+                  )
+                ]),
+                future: f,
+                builder: (context, snapshot) => HintText(
+                  snapshot.data.currentDevice.id,
+                ),
+              ),
             ),
           ),
           ListCell(
