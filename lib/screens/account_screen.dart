@@ -4,6 +4,7 @@ import 'package:identity/models/models.dart';
 
 class AccountScreen extends StatelessWidget {
   final _accountService = GetIt.I.get<AccountService>();
+  final _walletService = GetIt.I.get<WalletService>();
   @override
   Widget build(BuildContext context) {
     final f = _accountService.currentAccount();
@@ -23,7 +24,7 @@ class AccountScreen extends StatelessWidget {
                 initialData: const Account(uid: '...'),
                 future: f,
                 builder: (context, snapshot) => HintText(
-                  snapshot.data.uid ?? 'N/A',
+                  snapshot.data?.uid ?? 'N/A',
                 ),
               ),
             ),
@@ -41,16 +42,22 @@ class AccountScreen extends StatelessWidget {
                 ]),
                 future: f,
                 builder: (context, snapshot) => HintText(
-                  snapshot.data.currentDevice.id,
+                  snapshot.data?.currentDevice?.id ?? 'N/A',
                 ),
               ),
             ),
           ),
           ListCell(
-            title: 'Github',
+            title: 'Balance',
             trailing: SizedBox(
-              width: 90.w.toDouble(),
-              child: const HintText('@shekohex'),
+              width: 120.w.toDouble(),
+              child: FutureBuilder<String>(
+                initialData: '...',
+                future: _walletService.balance(),
+                builder: (context, snapshot) => HintText(
+                  '☼${snapshot.data}' ?? 'N/A',
+                ),
+              ),
             ),
           ),
           SizedBox(height: 20.w.toDouble()),

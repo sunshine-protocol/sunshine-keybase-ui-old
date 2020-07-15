@@ -52,8 +52,9 @@ class _MainScreenState extends State<MainScreen> {
           SizedBox(height: 40.h.toDouble()),
           Button(
             text: 'Transfer',
+            enabled: int.parse(_value) > 0,
             onPressed: () {
-              ExtendedNavigator.root.pushWalletTransferScreen();
+              ExtendedNavigator.root.pushWalletTransferScreen(amount: _value);
             },
             variant: ButtonVariant.success,
           ),

@@ -32,8 +32,11 @@ Future<void> $initGetIt(GetIt g, {String environment}) async {
   g.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   g.registerLazySingleton<WalletService>(
       () => WalletService(clientService: g<ClientService>()));
-  g.registerLazySingleton<AccountService>(
-      () => AccountService(clientService: g<ClientService>()));
+  g.registerLazySingleton<AccountService>(() => AccountService(
+        clientService: g<ClientService>(),
+        identityService: g<IdentityService>(),
+        deviceService: g<DeviceService>(),
+      ));
   g.registerLazySingleton<IdentityClientService>(() =>
       IdentityClientService(pathProviderService: g<PathProviderService>()));
 

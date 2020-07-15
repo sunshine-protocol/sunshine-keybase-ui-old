@@ -21,33 +21,34 @@ class ProdClientService implements ClientService {
 
   @override
   Future<String> deviceId() async {
-    return _identityClientService.deviceId();
+    return _identityClientService.currentDevice();
   }
 
   @override
   Future<String> addPaperKey() {
-    throw UnimplementedError();
+    return _identityClientService.addPaperKey();
   }
 
   @override
   Future<List<String>> identities(String uid) async {
-    return [];
+    return _identityClientService.listIdentities(uid);
   }
 
   @override
   Future<bool> lock() {
-    return _identityClientService.lock();
+    return _identityClientService.lockKey();
   }
 
   @override
-  Future<ProveIdentityResult> proveIdentity(SocialIdentityService service) {
-    throw UnimplementedError();
+  Future<ProveIdentityResult> proveIdentity(
+      SocialIdentityService service) async {
+    final result = await _identityClientService.proveIdentity(service.display);
+    return ProveIdentityResult(result[0], result[1]);
   }
 
   @override
-  Future<String> setDeviceKey(String password,
-      {String suri, String paperKey}) async {
-    return _identityClientService.setDeviceKey(
+  Future<String> setKey(String password, {String suri, String paperKey}) async {
+    return _identityClientService.setKey(
       password,
       suri: suri,
       paperKey: paperKey,
@@ -56,47 +57,54 @@ class ProdClientService implements ClientService {
 
   @override
   Future<bool> unlock(String password) {
-    return _identityClientService.unlock(password);
+    return _identityClientService.unlockKey(password);
   }
 
   @override
   Future<bool> addDevice(String id) {
-    throw UnimplementedError();
+    return _identityClientService.addDevice(id);
   }
 
   @override
-  Future<String> balance() {
-    throw UnimplementedError();
+  Future<String> balance() async {
+    return _identityClientService
+        .balance(await uid())
+        .then((value) => value.toString());
   }
 
   @override
   Future<List<String>> devices() async {
-    return [];
+    return _identityClientService.listDevices(await uid());
   }
 
   @override
   Future<bool> revokeDevice(String id) {
-    throw UnimplementedError();
+    return _identityClientService.removeDevice(id);
   }
 
   @override
   Future<bool> revokeIdentity(SocialIdentityService service) {
-    throw UnimplementedError();
+    return _identityClientService.revokeIdentity(service.display);
   }
 
   @override
-  Future<bool> transfer(String id, int amount) {
-    throw UnimplementedError();
+  Future<String> transfer(String id, int amount) {
+    return _identityClientService.transfer(id, amount);
   }
 
   @override
   Future<String> uid() async {
     final did = await deviceId();
-    return _identityClientService.uid(did);
+    return _identityClientService.resolveUid(did);
   }
 
   @override
-  Future<int> mint(String id) {
-    return _identityClientService.mint(id);
+  Future<int> mint() {
+    return _identityClientService.mint();
+  }
+
+  @override
+  Future<String> uidOf(String id) {
+    return _identityClientService.resolveUid(id);
   }
 }

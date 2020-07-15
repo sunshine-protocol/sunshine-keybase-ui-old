@@ -81,10 +81,12 @@ class _IntroScreenState extends State<IntroScreen> {
     // TODO(shekohex): handle error state
     if (snapshot.hasData && snapshot.data) {
       // TODO(shekohex): handle locked account
-      ExtendedNavigator.root
-        ..pop()
-        ..pushMainScreen();
-      return const SizedBox();
+      Future.microtask(
+        () => ExtendedNavigator.root
+          ..pop()
+          ..pushMainScreen(),
+      );
+      return Container();
     } else {
       return Column(
         children: [

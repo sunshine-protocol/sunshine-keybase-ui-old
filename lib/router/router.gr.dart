@@ -171,20 +171,25 @@ class Router extends RouterBase {
       );
     },
     WalletTransferScreen: (RouteData data) {
+      var args = data.getArgs<WalletTransferScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => WalletTransferScreen(),
+        builder: (context) => WalletTransferScreen(args.amount),
         settings: data,
       );
     },
     WalletTransferConfirmationScreen: (RouteData data) {
+      var args = data.getArgs<WalletTransferConfirmationScreenArguments>(
+          nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => WalletTransferConfirmationScreen(),
+        builder: (context) =>
+            WalletTransferConfirmationScreen(args.id, args.amount),
         settings: data,
       );
     },
     WalletTransferDoneScreen: (RouteData data) {
+      var args = data.getArgs<WalletTransferDoneScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => WalletTransferDoneScreen(),
+        builder: (context) => WalletTransferDoneScreen(args.id, args.amount),
         settings: data,
       );
     },
@@ -207,14 +212,16 @@ class Router extends RouterBase {
       );
     },
     RevokeDeviceScreen: (RouteData data) {
+      var args = data.getArgs<RevokeDeviceScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => RevokeDeviceScreen(),
+        builder: (context) => RevokeDeviceScreen(args.deviceId),
         settings: data,
       );
     },
     RevokeDeviceDoneScreen: (RouteData data) {
+      var args = data.getArgs<RevokeDeviceDoneScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => RevokeDeviceDoneScreen(),
+        builder: (context) => RevokeDeviceDoneScreen(args.deviceId),
         settings: data,
       );
     },
@@ -291,14 +298,32 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
 
   Future<dynamic> pushMainScreen() => pushNamed<dynamic>(Routes.mainScreen);
 
-  Future<dynamic> pushWalletTransferScreen() =>
-      pushNamed<dynamic>(Routes.walletTransferScreen);
+  Future<dynamic> pushWalletTransferScreen({
+    @required String amount,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.walletTransferScreen,
+        arguments: WalletTransferScreenArguments(amount: amount),
+      );
 
-  Future<dynamic> pushWalletTransferConfirmationScreen() =>
-      pushNamed<dynamic>(Routes.walletTransferConfirmationScreen);
+  Future<dynamic> pushWalletTransferConfirmationScreen({
+    @required String id,
+    @required String amount,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.walletTransferConfirmationScreen,
+        arguments:
+            WalletTransferConfirmationScreenArguments(id: id, amount: amount),
+      );
 
-  Future<dynamic> pushWalletTransferDoneScreen() =>
-      pushNamed<dynamic>(Routes.walletTransferDoneScreen);
+  Future<dynamic> pushWalletTransferDoneScreen({
+    @required String id,
+    @required String amount,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.walletTransferDoneScreen,
+        arguments: WalletTransferDoneScreenArguments(id: id, amount: amount),
+      );
 
   Future<dynamic> pushAccountScreen() =>
       pushNamed<dynamic>(Routes.accountScreen);
@@ -309,11 +334,21 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
   Future<dynamic> pushPaperKeyScreen() =>
       pushNamed<dynamic>(Routes.paperKeyScreen);
 
-  Future<dynamic> pushRevokeDeviceScreen() =>
-      pushNamed<dynamic>(Routes.revokeDeviceScreen);
+  Future<dynamic> pushRevokeDeviceScreen({
+    @required String deviceId,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.revokeDeviceScreen,
+        arguments: RevokeDeviceScreenArguments(deviceId: deviceId),
+      );
 
-  Future<dynamic> pushRevokeDeviceDoneScreen() =>
-      pushNamed<dynamic>(Routes.revokeDeviceDoneScreen);
+  Future<dynamic> pushRevokeDeviceDoneScreen({
+    @required String deviceId,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.revokeDeviceDoneScreen,
+        arguments: RevokeDeviceDoneScreenArguments(deviceId: deviceId),
+      );
 
   Future<dynamic> pushIdentitiesScreen() =>
       pushNamed<dynamic>(Routes.identitiesScreen);
@@ -342,4 +377,37 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
 class RecoverAccountStepTwoScreenArguments {
   final String paperKey;
   RecoverAccountStepTwoScreenArguments({@required this.paperKey});
+}
+
+//WalletTransferScreen arguments holder class
+class WalletTransferScreenArguments {
+  final String amount;
+  WalletTransferScreenArguments({@required this.amount});
+}
+
+//WalletTransferConfirmationScreen arguments holder class
+class WalletTransferConfirmationScreenArguments {
+  final String id;
+  final String amount;
+  WalletTransferConfirmationScreenArguments(
+      {@required this.id, @required this.amount});
+}
+
+//WalletTransferDoneScreen arguments holder class
+class WalletTransferDoneScreenArguments {
+  final String id;
+  final String amount;
+  WalletTransferDoneScreenArguments({@required this.id, @required this.amount});
+}
+
+//RevokeDeviceScreen arguments holder class
+class RevokeDeviceScreenArguments {
+  final String deviceId;
+  RevokeDeviceScreenArguments({@required this.deviceId});
+}
+
+//RevokeDeviceDoneScreen arguments holder class
+class RevokeDeviceDoneScreenArguments {
+  final String deviceId;
+  RevokeDeviceDoneScreenArguments({@required this.deviceId});
 }

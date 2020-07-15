@@ -5,5 +5,8 @@ import 'package:injectable/injectable.dart';
 @lazySingleton
 class IdentityClientService extends IdentityClient {
   IdentityClientService({PathProviderService pathProviderService})
-      : super(root: pathProviderService.applicationDocumentsDirectory);
+      : super(
+          root: pathProviderService.applicationDocumentsDirectory,
+          chainspecPath: Uri(path: 'assets/chainspec.json'),
+        );
 }

@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ffi/ffi.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:isolate/ports.dart';
 
@@ -10,19 +11,29 @@ import 'constants.dart' as ffi;
 import 'ffi.dart' as ffi;
 
 class IdentityClient {
-  IdentityClient({@required Directory root}) : _root = root {
+  IdentityClient({@required Directory root, @required Uri chainspecPath})
+      : _root = root,
+        _chainspecPath = chainspecPath {
     ffi.store_dart_post_cobject(NativeApi.postCObject);
+    ffi.client_setup_logger();
   }
 
   Future<bool> get ready => startUpClient();
 
   final Directory _root;
+  final Uri _chainspecPath;
+  bool _started = false;
 
   Future<bool> startUpClient() async {
+    // to avoid any other calls
+    if (_started) {
+      return true;
+    }
     final path = Utf8.toUtf8(_root.path);
+    final chainspecPath = Utf8.toUtf8(await _getChainspecPath());
     final completer = Completer<int>();
     final port = singleCompletePort(completer);
-    final result = ffi.client_init(port.nativePort, path);
+    final result = ffi.client_init(port.nativePort, path, chainspecPath);
     if (result == ffi.ok) {
       return _clientInitOkay(completer.future);
     } else if (result == ffi.alreadyInit) {
@@ -32,67 +43,151 @@ class IdentityClient {
     }
   }
 
-  Future<bool> lock() {
-    final completer = Completer<int>();
+  Future<bool> lockKey() {
+    final completer = Completer<bool>();
     final port = singleCompletePort(completer);
-    final result = ffi.client_lock(port.nativePort);
+    final result = ffi.client_key_lock(port.nativePort);
     assert(result == ffi.ok);
-    return completer.future.then((value) => value == ffi.lockedOk);
+    return _ok(completer.future);
   }
 
-  Future<bool> unlock(String password) {
-    final completer = Completer<int>();
+  Future<bool> unlockKey(String password) {
+    final completer = Completer<bool>();
     final port = singleCompletePort(completer);
     final pass = Utf8.toUtf8(password);
-    final result = ffi.client_unlock(port.nativePort, pass);
+    final result = ffi.client_key_unlock(port.nativePort, pass);
     assert(result == ffi.ok);
-    return completer.future.then((value) => value == ffi.unlockedOk);
+    return _ok(completer.future);
+  }
+
+  Future<String> setKey(String password, {String suri, String paperKey}) {
+    final completer = Completer<String>();
+    final port = singleCompletePort(completer);
+    final s = suri != null ? Utf8.toUtf8(suri) : nullptr;
+    final pass = Utf8.toUtf8(password);
+    final phrase = paperKey != null ? Utf8.toUtf8(paperKey) : nullptr;
+    final result = ffi.client_key_set(port.nativePort, pass, s, phrase);
+    assert(result == ffi.ok);
+    return _ok(completer.future);
+  }
+
+  Future<String> currentDevice() {
+    final completer = Completer<String>();
+    final port = singleCompletePort(completer);
+    final result = ffi.client_device_current(port.nativePort);
+    assert(result == ffi.ok);
+    return _ok(completer.future);
   }
 
   Future<bool> hasDeviceKey() {
     final completer = Completer<bool>();
     final port = singleCompletePort(completer);
-    final result = ffi.client_has_device_key(port.nativePort);
+    final result = ffi.client_device_has_key(port.nativePort);
     assert(result == ffi.ok);
-    return completer.future;
+    return _ok(completer.future);
   }
 
-  Future<String> setDeviceKey(String password, {String suri, String paperKey}) {
+  Future<bool> addDevice(String deviceId) {
+    final completer = Completer<bool>();
+    final port = singleCompletePort(completer);
+    final id = Utf8.toUtf8(deviceId);
+    final result = ffi.client_device_add(port.nativePort, id);
+    assert(result == ffi.ok);
+    return _ok(completer.future);
+  }
+
+  Future<bool> removeDevice(String deviceId) {
+    final completer = Completer<bool>();
+    final port = singleCompletePort(completer);
+    final id = Utf8.toUtf8(deviceId);
+    final result = ffi.client_device_remove(port.nativePort, id);
+    assert(result == ffi.ok);
+    return _ok(completer.future);
+  }
+
+  Future<List<String>> listDevices(String identifier) {
+    final completer = Completer<List<dynamic>>();
+    final port = singleCompletePort(completer);
+    final id = Utf8.toUtf8(identifier);
+    final result = ffi.client_device_list(port.nativePort, id);
+    assert(result == ffi.ok);
+    return _ok(completer.future).then((value) {
+      return value.map((e) => e.toString()).toList();
+    });
+  }
+
+  Future<String> addPaperKey() {
     final completer = Completer<String>();
     final port = singleCompletePort(completer);
-    final s = suri != null ? Utf8.toUtf8(suri) : Pointer<Utf8>.fromAddress(0);
-    final pass = Utf8.toUtf8(password);
-    final phrase =
-        paperKey != null ? Utf8.toUtf8(paperKey) : Pointer<Utf8>.fromAddress(0);
-    final result = ffi.client_key_set(port.nativePort, s, pass, phrase);
+    final result = ffi.client_device_paperkey(port.nativePort);
     assert(result == ffi.ok);
-    return completer.future;
+    return _ok(completer.future);
   }
 
-  Future<String> deviceId() {
-    final completer = Completer<String>();
+  Future<List<String>> listIdentities(String uid) {
+    final completer = Completer<List<dynamic>>();
     final port = singleCompletePort(completer);
-    final result = ffi.client_current_device_id(port.nativePort);
+    final id = Utf8.toUtf8(uid);
+    final result = ffi.client_id_list(port.nativePort, id);
     assert(result == ffi.ok);
-    return completer.future;
+    return _ok(completer.future).then((value) {
+      return value.map((e) => e.toString()).toList();
+    });
   }
 
-  Future<String> uid(String identifier) {
+  Future<String> resolveUid(String identifier) {
     final completer = Completer<String>();
     final port = singleCompletePort(completer);
     final id = Utf8.toUtf8(identifier);
-    final result = ffi.client_resolve_uid(port.nativePort, id);
+    final result = ffi.client_id_resolve(port.nativePort, id);
     assert(result == ffi.ok);
-    return completer.future;
+    return _ok(completer.future);
   }
 
-  Future<int> mint(String identifier) {
+  Future<List<String>> proveIdentity(String service) {
+    final completer = Completer<List<dynamic>>();
+    final port = singleCompletePort(completer);
+    final s = Utf8.toUtf8(service);
+    final result = ffi.client_id_prove(port.nativePort, s);
+    assert(result == ffi.ok);
+    return _ok(completer.future).then((value) {
+      return value.map((e) => e.toString()).toList();
+    });
+  }
+
+  Future<bool> revokeIdentity(String service) {
+    final completer = Completer<bool>();
+    final port = singleCompletePort(completer);
+    final s = Utf8.toUtf8(service);
+    final result = ffi.client_id_revoke(port.nativePort, s);
+    assert(result == ffi.ok);
+    return _ok(completer.future);
+  }
+
+  Future<int> balance(String identifier) {
     final completer = Completer<String>();
     final port = singleCompletePort(completer);
     final id = Utf8.toUtf8(identifier);
-    final result = ffi.client_faucet_mint(port.nativePort, id);
+    final result = ffi.client_wallet_balance(port.nativePort, id);
     assert(result == ffi.ok);
-    return completer.future.then(int.parse);
+    return _ok(completer.future).then(int.parse);
+  }
+
+  Future<String> transfer(String identifier, int amount) {
+    final completer = Completer<String>();
+    final port = singleCompletePort(completer);
+    final id = Utf8.toUtf8(identifier);
+    final result = ffi.client_wallet_transfer(port.nativePort, id, amount);
+    assert(result == ffi.ok);
+    return _ok(completer.future);
+  }
+
+  Future<int> mint() {
+    final completer = Completer<String>();
+    final port = singleCompletePort(completer);
+    final result = ffi.client_faucet_mint(port.nativePort);
+    assert(result == ffi.ok);
+    return _ok(completer.future).then(int.parse);
   }
 
   Future<bool> _clientInitOkay(FutureOr<int> f) async {
@@ -105,6 +200,39 @@ class IdentityClient {
       '\t=> ${elapsed.inMinutes} min\n'
       '\t=> ${elapsed.inSeconds} sec\n',
     );
+    _started = res == ffi.ok;
     return res == ffi.ok;
+  }
+
+  Future<String> _getChainspecPath() async {
+    final path = '${_root.path}/chainspec.josn';
+    final exists = File(path).existsSync();
+    if (exists) {
+      return path;
+    } else {
+      final bytes = await rootBundle.loadString(_chainspecPath.path);
+      final f = await File(path).writeAsString(bytes, flush: true);
+      return f.path;
+    }
+  }
+
+  Future<T> _ok<T>(FutureOr<T> f) async {
+    final val = await f;
+    // check if there is an error by check if the value is null
+    if (val == null) {
+      // okay this maybe an error, lets read it
+      final e = ffi.client_last_error();
+      if (e == nullptr) {
+        // okay no error? that means it's okay to get a null from the ffi
+        return null;
+      } else {
+        // it is a an error, get the utf8 value
+        final message = Utf8.fromUtf8(e);
+        throw StateError(message);
+      }
+    } else {
+      // no errors, yay!
+      return val;
+    }
   }
 }

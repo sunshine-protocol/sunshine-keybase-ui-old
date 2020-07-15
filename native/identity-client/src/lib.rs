@@ -1,25 +1,22 @@
-#![allow(clippy::not_unsafe_ptr_arg_deref)]
-use ffi::impl_ffi;
-use sunshine_client::{build_client, Error, Runtime};
+use sunshine_client::Client;
+use sunshine_identity_ffi::impl_ffi;
 
-async fn setup_client(root: &str) -> Result<Client, Error> {
+/// This should be called once maybe before you create the client
+/// it just constract the Logger for us
+#[no_mangle]
+pub extern "C" fn client_setup_logger() {
     #[cfg(target_os = "android")]
     {
-        use android_logger::Config;
+        use android_logger::{Config, FilterBuilder};
         use log::Level;
         android_logger::init_once(
-            Config::default().with_min_level(Level::Info),
+            Config::default().with_min_level(Level::Info).with_filter(
+                FilterBuilder::new()
+                    .parse("identity_client,sc_information,substrate_subxt")
+                    .build(),
+            ),
         );
-    }
-    let root = PathBuf::from(root);
-    info!("Setting up client ...");
-    match build_client(root.as_path()).await {
-        Ok(client) => Ok(client),
-        Err(e) => {
-            error!("Creating client error: {}", e);
-            Err(e)
-        },
     }
 }
 
-impl_ffi!(runtime: Runtime, client: setup_client);
+impl_ffi!(client: Client);

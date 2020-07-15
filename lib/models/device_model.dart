@@ -7,4 +7,7 @@ class Device {
   final bool currentDevice;
 
   bool get isCurrentDevice => currentDevice;
+  @override
+  // ignore: hash_and_equals
+  int get hashCode => id.hashCode;
 }

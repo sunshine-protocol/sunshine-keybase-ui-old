@@ -14,9 +14,12 @@ class LoadingView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 100.h.toDouble()),
-          HeaderText(
-            'Hold on\n'
-            '$_message ...',
+          FittedBox(
+            fit: BoxFit.fitWidth,
+            child: HeaderText(
+              'Hold on\n'
+              '$_message ...',
+            ),
           ),
           SizedBox(height: 120.h.toDouble()),
           Center(

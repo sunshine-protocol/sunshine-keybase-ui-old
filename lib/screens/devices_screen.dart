@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:identity/identity.dart';
+import 'package:identity/models/models.dart';
 
 class DevicesScreen extends StatelessWidget {
   @override
@@ -18,49 +19,64 @@ class _DeviceScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    final _accountService = GetIt.I.get<AccountService>();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListView(
-          children: [
-            const HeaderText('Your Devices'),
-            SizedBox(height: 15.w.toDouble()),
-            const HintText('Tip: click on any device to see more actions'),
-            SizedBox(height: 10.w.toDouble()),
-            ListCell(
-              title: '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh',
-              trailing: SizedBox(
-                width: 120.w.toDouble(),
-                child: const HintText('Current Device'),
-              ),
-              onTap: () {
-                _showActions(context);
-              },
-            ),
-            ListCell(
-              title: '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh',
-              trailing: SizedBox(
-                width: 120.w.toDouble(),
-              ),
-            ),
-          ],
+        const HeaderText('Your Devices'),
+        SizedBox(height: 15.w.toDouble()),
+        const Center(
+          child: HintText('Tip: click on any device to see more actions'),
         ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 15.h.toDouble()),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Button(
-              text: 'Create a Paper Key',
-              onPressed: () {
-                ExtendedNavigator.root.pushPaperKeyScreen();
-              },
-            ),
+        SizedBox(height: 10.w.toDouble()),
+        SizedBox(
+          height: ScreenUtil.screenHeight - 162,
+          child: Stack(
+            children: [
+              FutureBuilder<Account>(
+                future: _accountService.currentAccount(),
+                initialData: const Account(devices: [Device(id: '...')]),
+                builder: _buildDevices,
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 15.h.toDouble()),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Button(
+                    text: 'Create a Paper Key',
+                    onPressed: () {
+                      ExtendedNavigator.root.pushPaperKeyScreen();
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  void _showActions(BuildContext context) {
+  Widget _buildDevices(_, AsyncSnapshot<Account> snapshot) {
+    return ListView.builder(
+      itemCount: snapshot.data?.devices?.length ?? 0,
+      itemBuilder: (context, i) => ListCell(
+        title: snapshot.data?.devices[i]?.id ?? 'No ID?',
+        trailing: SizedBox(
+          width: 120.w.toDouble(),
+          child: snapshot.data.devices[i].currentDevice
+              ? const HintText('Current Device')
+              : null,
+        ),
+        onTap: () {
+          _showActions(context, snapshot.data?.devices[i]?.id);
+        },
+      ),
+    );
+  }
+
+  void _showActions(BuildContext context, String deviceId) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -75,11 +91,12 @@ class _DeviceScreenBody extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 5.h.toDouble()),
-              Divider(
-                thickness: 2,
-                indent: ScreenUtil.screenWidth / 8,
-                endIndent: ScreenUtil.screenWidth / 8,
-                color: Colors.black54,
+              SizedBox(
+                width: 100.w.toDouble(),
+                child: Divider(
+                  thickness: 2,
+                  color: Colors.black54,
+                ),
               ),
               SizedBox(height: 20.h.toDouble()),
               Button(
@@ -88,7 +105,7 @@ class _DeviceScreenBody extends StatelessWidget {
                 onPressed: () {
                   ExtendedNavigator.root
                     ..pop()
-                    ..pushRevokeDeviceScreen();
+                    ..pushRevokeDeviceScreen(deviceId: deviceId);
                 },
               ),
               SizedBox(height: 10.h.toDouble()),
@@ -106,6 +123,8 @@ class _DeviceScreenBody extends StatelessWidget {
 }
 
 class RevokeDeviceScreen extends StatelessWidget {
+  const RevokeDeviceScreen(this.deviceId);
+  final String deviceId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,8 +134,8 @@ class RevokeDeviceScreen extends StatelessWidget {
           SizedBox(height: 50.h.toDouble()),
           const HeaderText('Your are about to revoke'),
           SizedBox(height: 20.h.toDouble()),
-          const Input(
-            hintText: '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh',
+          Input(
+            hintText: deviceId,
             readOnly: true,
           ),
           SizedBox(height: 40.h.toDouble()),
@@ -144,7 +163,9 @@ class RevokeDeviceScreen extends StatelessWidget {
     );
   }
 
-  void _revokeDevice(BuildContext context) {
+  Future<void> _revokeDevice(BuildContext context) async {
+    final _deviceService = GetIt.I.get<DeviceService>();
+    // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -152,18 +173,25 @@ class RevokeDeviceScreen extends StatelessWidget {
         loadingMessage: 'we are revoking this device',
       ),
     );
-    Future.delayed(
-      const Duration(seconds: 2),
-      () {
-        ExtendedNavigator.root
-          ..popPages(1)
-          ..pushRevokeDeviceDoneScreen();
-      },
-    );
+    final result = await _deviceService.revokeDevice(deviceId);
+    if (result) {
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () {
+          ExtendedNavigator.root
+            ..popPages(1)
+            ..pushRevokeDeviceDoneScreen(deviceId: deviceId);
+        },
+      );
+    } else {
+      ExtendedNavigator.root.pop();
+    }
   }
 }
 
 class RevokeDeviceDoneScreen extends StatelessWidget {
+  const RevokeDeviceDoneScreen(this.deviceId);
+  final String deviceId;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,16 +200,16 @@ class RevokeDeviceDoneScreen extends StatelessWidget {
           SizedBox(height: 120.h.toDouble()),
           const HeaderText('You successfully revoked'),
           SizedBox(height: 20.h.toDouble()),
-          const Input(
-            hintText: '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh',
+          Input(
+            hintText: deviceId,
             readOnly: true,
           ),
           SizedBox(height: 20.h.toDouble()),
           const HeaderText('from your devices'),
           SizedBox(height: 40.h.toDouble()),
           const SunshineLogo(),
-          SizedBox(height: 40.h.toDouble()),
-          const HintText('you now have only 1 device(s)'),
+          // SizedBox(height: 40.h.toDouble()),
+          // const HintText('you now have only 1 device(s)'),
           const Expanded(child: SizedBox()),
           Button(
             text: 'Finish',

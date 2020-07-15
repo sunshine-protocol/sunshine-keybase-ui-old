@@ -64,8 +64,7 @@ class DevClientService implements ClientService {
   }
 
   @override
-  Future<String> setDeviceKey(String password,
-      {String suri, String paperKey}) async {
+  Future<String> setKey(String password, {String suri, String paperKey}) async {
     _password = password;
     _uid = '1';
     _deviceId = '5GrwvaEF5zXb26Fz9rcQpDWS57CEfgh';
@@ -110,7 +109,7 @@ class DevClientService implements ClientService {
   }
 
   @override
-  Future<bool> transfer(String id, int amount) {
+  Future<String> transfer(String id, int amount) {
     throw UnimplementedError();
   }
 
@@ -120,7 +119,12 @@ class DevClientService implements ClientService {
   }
 
   @override
-  Future<int> mint(String id) {
+  Future<int> mint() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> uidOf(String id) {
     throw UnimplementedError();
   }
 }

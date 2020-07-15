@@ -6,6 +6,13 @@ import 'client/client_service.dart';
 class WalletService {
   WalletService({ClientService clientService}) : _clientService = clientService;
 
-  // ignore: unused_field
   final ClientService _clientService;
+
+  Future<String> balance() {
+    return _clientService.balance();
+  }
+
+  Future<String> transfer(String to, int amount) {
+    return _clientService.transfer(to, amount);
+  }
 }

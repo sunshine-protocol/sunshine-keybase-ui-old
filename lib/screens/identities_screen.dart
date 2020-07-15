@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:identity/identity.dart';
+import 'package:identity/models/models.dart';
 
 class IdentitiesScreen extends StatelessWidget {
   @override
@@ -11,20 +12,42 @@ class IdentitiesScreen extends StatelessWidget {
   }
 }
 
-class _IdentitesScreenBody extends StatelessWidget {
+class _IdentitesScreenBody extends StatefulWidget {
   const _IdentitesScreenBody({
     Key key,
   }) : super(key: key);
-  final String _githubIdentity = null;
+
+  @override
+  __IdentitesScreenBodyState createState() => __IdentitesScreenBodyState();
+}
+
+class __IdentitesScreenBodyState extends State<_IdentitesScreenBody> {
+  final _accountService = GetIt.I.get<AccountService>();
+
+  SocialIdentityService _github;
+
   @override
   Widget build(BuildContext context) {
+    final f = _accountService.currentAccount();
     return ListView(
       children: [
         ListCell(
           title: 'Github',
           trailing: SizedBox(
             width: 80.w.toDouble(),
-            child: HintText(_githubIdentity ?? 'N/A'),
+            child: FutureBuilder<Account>(
+              future: f,
+              initialData: Account(identities: [
+                GithubIdentity(proofUrl: null, username: '...'),
+              ]),
+              builder: (context, snapshot) {
+                _github = snapshot.data?.identities?.firstWhere(
+                  (id) => id.serviceName == 'github',
+                  orElse: () => null,
+                );
+                return HintText(_github?.username ?? 'N/A');
+              },
+            ),
           ),
           onTap: () {
             _showActions(context);
@@ -57,11 +80,14 @@ class _IdentitesScreenBody extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h.toDouble()),
-              if (_githubIdentity != null) ...[
+              if (_github != null && _github.isProved) ...[
                 Button(
                   text: 'View Proof',
                   variant: ButtonVariant.success,
-                  onPressed: ExtendedNavigator.root.pop,
+                  onPressed: () {
+                    print(_github.proofUrl);
+                    ExtendedNavigator.root.pop();
+                  },
                 ),
                 SizedBox(height: 10.h.toDouble()),
                 Button(

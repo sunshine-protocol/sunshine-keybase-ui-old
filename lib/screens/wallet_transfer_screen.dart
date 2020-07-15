@@ -2,11 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:identity/identity.dart';
 
 class WalletTransferScreen extends StatefulWidget {
+  const WalletTransferScreen(this.amount);
+
+  final String amount;
+
   @override
   _WalletTransferScreenState createState() => _WalletTransferScreenState();
 }
 
 class _WalletTransferScreenState extends State<WalletTransferScreen> {
+  TextEditingController _idController;
+  String _errText;
+  @override
+  void initState() {
+    super.initState();
+    _idController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,8 +40,15 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
             child: const HintText('Who you want to send these tokens?'),
           ),
           SizedBox(height: 20.h.toDouble()),
-          const Input(
+          Input(
             hintText: 'UID or Username',
+            controller: _idController,
+            errorText: _errText,
+            onChanged: (_) {
+              if (_errText != null) {
+                _errText = null;
+              }
+            },
           ),
           SizedBox(height: 10.h.toDouble()),
           const Expanded(
@@ -33,7 +58,15 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
             text: 'Next',
             variant: ButtonVariant.success,
             onPressed: () {
-              ExtendedNavigator.root.pushWalletTransferConfirmationScreen();
+              if (_idController.text.isEmpty) {
+                setState(() {
+                  _errText = 'Please enter the UID';
+                });
+              }
+              ExtendedNavigator.root.pushWalletTransferConfirmationScreen(
+                amount: widget.amount,
+                id: _idController.text,
+              );
             },
           ),
           SizedBox(height: 15.h.toDouble())
@@ -44,6 +77,11 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
 }
 
 class WalletTransferConfirmationScreen extends StatefulWidget {
+  const WalletTransferConfirmationScreen(this.id, this.amount);
+
+  final String amount;
+  final String id;
+
   @override
   _WalletTransferConfirmationScreenState createState() =>
       _WalletTransferConfirmationScreenState();
@@ -51,7 +89,13 @@ class WalletTransferConfirmationScreen extends StatefulWidget {
 
 class _WalletTransferConfirmationScreenState
     extends State<WalletTransferConfirmationScreen> {
-  final String _tokens = '1000';
+  WalletService _walletService;
+  @override
+  void initState() {
+    super.initState();
+    _walletService = GetIt.I.get<WalletService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,11 +107,11 @@ class _WalletTransferConfirmationScreenState
           SizedBox(height: 30.h.toDouble()),
           const Center(child: HeaderText('You are about to transfer')),
           SizedBox(height: 30.h.toDouble()),
-          _TransferTokensValue(tokens: _tokens),
+          _TransferTokensValue(tokens: widget.amount),
           SizedBox(height: 12.h.toDouble()),
           const Center(child: HintText('Tokens')),
           SizedBox(height: 30.h.toDouble()),
-          const Center(child: HeaderText('To shekohex@github')),
+          Center(child: HeaderText('To ${widget.id}')),
           SizedBox(height: 30.h.toDouble()),
           const Center(
             child: HintText('There is no way to reverse this'),
@@ -87,20 +131,28 @@ class _WalletTransferConfirmationScreenState
     );
   }
 
-  void _walletTransfer() {
+  Future<void> _walletTransfer() async {
+    // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const LoadingView(
-        loadingMessage: 'we are sending the tokens',
+      builder: (_) => LoadingView(
+        loadingMessage: 'we are sending ${widget.amount} tokens',
       ),
     );
-    Future.delayed(
-      const Duration(seconds: 2),
+    await _walletService.transfer(
+      widget.id,
+      int.parse(widget.amount),
+    );
+    await Future.delayed(
+      const Duration(milliseconds: 100),
       () {
         ExtendedNavigator.root
           ..popPages(2)
-          ..pushWalletTransferDoneScreen();
+          ..pushWalletTransferDoneScreen(
+            id: widget.id,
+            amount: widget.amount,
+          );
       },
     );
   }
@@ -137,6 +189,9 @@ class _TransferTokensValue extends StatelessWidget {
 }
 
 class WalletTransferDoneScreen extends StatelessWidget {
+  const WalletTransferDoneScreen(this.id, this.amount);
+  final String amount;
+  final String id;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,9 +201,9 @@ class WalletTransferDoneScreen extends StatelessWidget {
           SizedBox(height: 100.h.toDouble()),
           const Center(child: HeaderText('You successfully sent')),
           SizedBox(height: 30.h.toDouble()),
-          const _TransferTokensValue(tokens: '1000'),
+          _TransferTokensValue(tokens: amount),
           SizedBox(height: 30.h.toDouble()),
-          const Center(child: HeaderText('tokens to shekohex@github')),
+          Center(child: HeaderText('tokens to $id')),
           SizedBox(height: 30.h.toDouble()),
           const SunshineLogo(),
           const Expanded(

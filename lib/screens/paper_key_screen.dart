@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:identity/identity.dart';
 
-class PaperKeyScreen extends StatelessWidget {
+class PaperKeyScreen extends StatefulWidget {
+  @override
+  _PaperKeyScreenState createState() => _PaperKeyScreenState();
+}
+
+class _PaperKeyScreenState extends State<PaperKeyScreen> {
+  DeviceService _deviceService;
+
+  @override
+  void initState() {
+    super.initState();
+    _deviceService = GetIt.I.get<DeviceService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,12 +24,14 @@ class PaperKeyScreen extends StatelessWidget {
         children: [
           const HeaderText('Device paper key'),
           SizedBox(height: 28.h.toDouble()),
-          const Input(
-            hintText: 'mandate robust earth scan shrimp second '
-                'pipe pitch eternal snap glare tooth bean crucial '
-                'river bar crash nice sorry laundry oppose filter aunt swear',
-            maxLines: 4,
-            readOnly: true,
+          FutureBuilder<String>(
+            future: _deviceService.addPaperKey(),
+            initialData: '...',
+            builder: (context, snapshot) => Input(
+              hintText: snapshot.data,
+              maxLines: 5,
+              readOnly: true,
+            ),
           ),
           const Padding(
             padding: EdgeInsets.all(22),

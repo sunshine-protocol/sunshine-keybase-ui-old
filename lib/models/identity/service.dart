@@ -3,5 +3,5 @@ abstract class SocialIdentityService {
   String get serviceName;
   String get proofUrl;
   String get display => '$username@$serviceName';
-  bool get isProved => username != null;
+  bool get isProved => proofUrl != null;
 }
