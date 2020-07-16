@@ -30,9 +30,7 @@ class IdentityService {
 
   SocialIdentityService _parse(String identity) {
     print(identity);
-    final regex =
-        RegExp('^\w{3,38}@github\shttps:\/\/gist\.github\.com\/[\w\/]+\$');
-    if (regex.hasMatch(identity)) {
+    if (identity.contains('gist.github.com')) {
       final parts = identity.split(' ');
       print(parts);
       final parts2 = parts[0].split('@');

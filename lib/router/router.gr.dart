@@ -170,6 +170,7 @@ class Router extends RouterBase {
       return buildAdaptivePageRoute<dynamic>(
         builder: (context) => MainScreen(),
         settings: data,
+        maintainState: false,
       );
     },
     WalletTransferScreen: (RouteData data) {
@@ -191,11 +192,7 @@ class Router extends RouterBase {
     WalletTransferDoneScreen: (RouteData data) {
       var args = data.getArgs<WalletTransferDoneScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => WalletTransferDoneScreen(
-          args.id,
-          args.amount,
-          args.currentBalance,
-        ),
+        builder: (context) => WalletTransferDoneScreen(args.id, args.amount),
         settings: data,
       );
     },
@@ -203,6 +200,7 @@ class Router extends RouterBase {
       return buildAdaptivePageRoute<dynamic>(
         builder: (context) => AccountScreen(),
         settings: data,
+        maintainState: false,
       );
     },
     DevicesScreen: (RouteData data) {
@@ -330,12 +328,10 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
   Future<dynamic> pushWalletTransferDoneScreen({
     @required String id,
     @required String amount,
-    @required String currentBalance,
   }) =>
       pushNamed<dynamic>(
         Routes.walletTransferDoneScreen,
-        arguments: WalletTransferDoneScreenArguments(
-            id: id, amount: amount, currentBalance: currentBalance),
+        arguments: WalletTransferDoneScreenArguments(id: id, amount: amount),
       );
 
   Future<dynamic> pushAccountScreen() =>
@@ -427,11 +423,7 @@ class WalletTransferConfirmationScreenArguments {
 class WalletTransferDoneScreenArguments {
   final String id;
   final String amount;
-  final String currentBalance;
-  WalletTransferDoneScreenArguments(
-      {@required this.id,
-      @required this.amount,
-      @required this.currentBalance});
+  WalletTransferDoneScreenArguments({@required this.id, @required this.amount});
 }
 
 //RevokeDeviceScreen arguments holder class

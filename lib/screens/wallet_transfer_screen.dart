@@ -149,7 +149,7 @@ class _WalletTransferConfirmationScreenState
     // hide keyboard
     FocusScope.of(context).requestFocus(FocusNode());
     try {
-      final currentBalance = await _walletService.transfer(
+      await _walletService.transfer(
         widget.id,
         int.parse(widget.amount),
       );
@@ -161,7 +161,6 @@ class _WalletTransferConfirmationScreenState
             ..pushWalletTransferDoneScreen(
               id: widget.id,
               amount: widget.amount,
-              currentBalance: currentBalance,
             );
         },
       );
@@ -210,12 +209,12 @@ class _TransferTokensValue extends StatelessWidget {
 }
 
 class WalletTransferDoneScreen extends StatelessWidget {
-  const WalletTransferDoneScreen(this.id, this.amount, this.currentBalance);
+  const WalletTransferDoneScreen(this.id, this.amount);
   final String amount;
   final String id;
-  final String currentBalance;
   @override
   Widget build(BuildContext context) {
+    final _walletService = GetIt.I.get<WalletService>();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -229,10 +228,14 @@ class WalletTransferDoneScreen extends StatelessWidget {
           SizedBox(height: 30.h.toDouble()),
           const SunshineLogo(),
           SizedBox(height: 30.h.toDouble()),
-          Center(
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: HintText('Your current balance: ☼$currentBalance'),
+          FutureBuilder<String>(
+            initialData: '...',
+            future: _walletService.balance(),
+            builder: (context, snapshot) => Center(
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: HintText('Your current balance: ☼${snapshot.data}'),
+              ),
             ),
           ),
           SizedBox(height: 30.h.toDouble()),
@@ -244,9 +247,7 @@ class WalletTransferDoneScreen extends StatelessWidget {
             text: 'Finish',
             variant: ButtonVariant.primary,
             onPressed: () {
-              ExtendedNavigator.root
-                ..popPages(2)
-                ..pushMainScreen();
+              ExtendedNavigator.root.popPages(3);
             },
           ),
           SizedBox(height: 15.h.toDouble())

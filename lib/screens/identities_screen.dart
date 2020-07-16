@@ -186,6 +186,7 @@ class _ProveIdentityScreenState extends State<ProveIdentityScreen> {
       setState(() {
         _errText = 'Please Provide a valid username';
       });
+      return;
     }
     // hide keyboard
     FocusScope.of(context).requestFocus(FocusNode());
@@ -197,21 +198,24 @@ class _ProveIdentityScreenState extends State<ProveIdentityScreen> {
         loadingMessage: 'we are creating a proof for your account',
       ),
     );
-    final result = await _identityService.proveIdentity(
-      GithubIdentity(username: _username.text, proofUrl: null),
-    );
-    print(result.proof);
-    Future.delayed(
-      const Duration(milliseconds: 100),
-      () {
-        ExtendedNavigator.root
-          ..popPages(1)
-          ..pushProveIdentityInstractionsScreen(
-            username: _username.text,
-            proveIdentityResult: result,
-          );
-      },
-    );
+    try {
+      final result = await _identityService.proveIdentity(
+        GithubIdentity(username: _username.text, proofUrl: null),
+      );
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () {
+          ExtendedNavigator.root
+            ..popPages(1)
+            ..pushProveIdentityInstractionsScreen(
+              username: _username.text,
+              proveIdentityResult: result,
+            );
+        },
+      );
+    } catch (_) {
+      ExtendedNavigator.root.pop();
+    }
   }
 }
 
