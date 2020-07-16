@@ -78,9 +78,7 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   Widget _hasDeviceKey(BuildContext context, AsyncSnapshot<bool> snapshot) {
-    // TODO(shekohex): handle error state
     if (snapshot.hasData && snapshot.data) {
-      // TODO(shekohex): handle locked account
       Future.microtask(
         () => ExtendedNavigator.root
           ..pop()
@@ -95,9 +93,7 @@ class _IntroScreenState extends State<IntroScreen> {
             text: 'Generate Account',
             onPressed: () {
               // step one: Device name, we skip that for now.
-              ExtendedNavigator.root
-                ..pop()
-                ..pushGenerateAccountStepTwoScreen();
+              ExtendedNavigator.root.pushGenerateAccountStepTwoScreen();
             },
           ),
           SizedBox(height: 20.h.toDouble()),
@@ -105,9 +101,7 @@ class _IntroScreenState extends State<IntroScreen> {
             variant: ButtonVariant.primary,
             text: 'Restore my account',
             onPressed: () {
-              ExtendedNavigator.root
-                ..pop()
-                ..pushRecoverAccountStepOneScreen();
+              ExtendedNavigator.root.pushRecoverAccountStepOneScreen();
             },
           ),
         ],

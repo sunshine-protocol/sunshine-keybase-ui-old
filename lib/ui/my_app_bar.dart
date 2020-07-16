@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:identity/identity.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({String title, double elevation = 0})
@@ -18,7 +19,17 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       iconTheme: IconThemeData(color: Colors.black),
       backgroundColor: Colors.white,
+      brightness: Brightness.light,
       elevation: _elevation,
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back,
+          color: Colors.black,
+        ),
+        onPressed: () {
+          ExtendedNavigator.root.pop();
+        },
+      ),
     );
   }
 

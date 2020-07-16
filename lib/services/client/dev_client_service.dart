@@ -6,7 +6,6 @@ import 'client_service.dart';
 @dev
 @LazySingleton(as: ClientService)
 class DevClientService implements ClientService {
-  bool _isLocked = false;
   String _uid;
   String _deviceId;
   String _balance;
@@ -44,7 +43,6 @@ class DevClientService implements ClientService {
 
   @override
   Future<bool> lock() async {
-    _isLocked = true;
     return true;
   }
 
@@ -76,7 +74,6 @@ class DevClientService implements ClientService {
   @override
   Future<bool> unlock(String password) async {
     if (password == _password) {
-      _isLocked = true;
       return true;
     } else {
       return false;

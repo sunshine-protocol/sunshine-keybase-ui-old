@@ -34,9 +34,9 @@ class _DeviceScreenBody extends StatelessWidget {
           height: ScreenUtil.screenHeight - 162,
           child: Stack(
             children: [
-              FutureBuilder<Account>(
-                future: _accountService.currentAccount(),
-                initialData: const Account(devices: [Device(id: '...')]),
+              FutureBuilder<List<Device>>(
+                future: _accountService.devices(),
+                initialData: const [Device(id: '...')],
                 builder: _buildDevices,
               ),
               Padding(
@@ -58,19 +58,19 @@ class _DeviceScreenBody extends StatelessWidget {
     );
   }
 
-  Widget _buildDevices(_, AsyncSnapshot<Account> snapshot) {
+  Widget _buildDevices(_, AsyncSnapshot<List<Device>> snapshot) {
     return ListView.builder(
-      itemCount: snapshot.data?.devices?.length ?? 0,
+      itemCount: snapshot.data?.length ?? 0,
       itemBuilder: (context, i) => ListCell(
-        title: snapshot.data?.devices[i]?.id ?? 'No ID?',
+        title: snapshot.data[i]?.id ?? 'No ID?',
         trailing: SizedBox(
           width: 120.w.toDouble(),
-          child: snapshot.data.devices[i].currentDevice
+          child: snapshot.data[i].currentDevice
               ? const HintText('Current Device')
               : null,
         ),
         onTap: () {
-          _showActions(context, snapshot.data?.devices[i]?.id);
+          _showActions(context, snapshot.data[i]?.id);
         },
       ),
     );
@@ -144,13 +144,7 @@ class RevokeDeviceScreen extends StatelessWidget {
           const HintText('There is no way to reverse this'),
           const Expanded(child: SizedBox()),
           SizedBox(height: 20.h.toDouble()),
-          Button(
-            text: 'Yes, Revoke',
-            variant: ButtonVariant.danger,
-            onPressed: () {
-              _revokeDevice(context);
-            },
-          ),
+          _RevokeDeviceButton(deviceId: deviceId),
           SizedBox(height: 10.h.toDouble()),
           Button(
             text: 'No, go back',
@@ -160,6 +154,25 @@ class RevokeDeviceScreen extends StatelessWidget {
           SizedBox(height: 15.h.toDouble()),
         ],
       ),
+    );
+  }
+}
+
+class _RevokeDeviceButton extends StatelessWidget {
+  const _RevokeDeviceButton({
+    @required this.deviceId,
+    Key key,
+  }) : super(key: key);
+
+  final String deviceId;
+  @override
+  Widget build(BuildContext context) {
+    return Button(
+      text: 'Yes, Revoke',
+      variant: ButtonVariant.danger,
+      onPressed: () {
+        _revokeDevice(context);
+      },
     );
   }
 
@@ -173,18 +186,35 @@ class RevokeDeviceScreen extends StatelessWidget {
         loadingMessage: 'we are revoking this device',
       ),
     );
-    final result = await _deviceService.revokeDevice(deviceId);
-    if (result) {
-      Future.delayed(
-        const Duration(milliseconds: 100),
-        () {
-          ExtendedNavigator.root
-            ..popPages(1)
-            ..pushRevokeDeviceDoneScreen(deviceId: deviceId);
-        },
-      );
-    } else {
+    try {
+      final result = await _deviceService.revokeDevice(deviceId);
+      if (result) {
+        Future.delayed(
+          const Duration(milliseconds: 100),
+          () {
+            ExtendedNavigator.root
+              ..popPages(1)
+              ..pushRevokeDeviceDoneScreen(deviceId: deviceId);
+          },
+        );
+      } else {
+        ExtendedNavigator.root.pop();
+        final snackbar = SnackBar(
+          content: const Text("Couldn't Remove this device !"),
+          backgroundColor: AppColors.danger,
+          duration: const Duration(seconds: 5),
+        );
+        Scaffold.of(context).showSnackBar(snackbar);
+      }
+    } catch (_) {
       ExtendedNavigator.root.pop();
+      final snackbar = SnackBar(
+        content:
+            const Text("you don't have enough tokens to complete transaction"),
+        backgroundColor: AppColors.danger,
+        duration: const Duration(seconds: 5),
+      );
+      Scaffold.of(context).showSnackBar(snackbar);
     }
   }
 }

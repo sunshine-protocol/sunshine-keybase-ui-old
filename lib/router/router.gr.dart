@@ -18,6 +18,8 @@ import 'package:identity/screens/account_screen.dart';
 import 'package:identity/screens/devices_screen.dart';
 import 'package:identity/screens/paper_key_screen.dart';
 import 'package:identity/screens/identities_screen.dart';
+import 'package:identity/services/client/client_service.dart';
+import 'package:identity/models/identity/service.dart';
 
 class Routes {
   static const String blankScreen = '/blank-screen';
@@ -189,7 +191,11 @@ class Router extends RouterBase {
     WalletTransferDoneScreen: (RouteData data) {
       var args = data.getArgs<WalletTransferDoneScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => WalletTransferDoneScreen(args.id, args.amount),
+        builder: (context) => WalletTransferDoneScreen(
+          args.id,
+          args.amount,
+          args.currentBalance,
+        ),
         settings: data,
       );
     },
@@ -238,20 +244,25 @@ class Router extends RouterBase {
       );
     },
     ProveIdentityInstractionsScreen: (RouteData data) {
+      var args =
+          data.getArgs<ProveIdentityInstractionsScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => ProveIdentityInstractionsScreen(),
+        builder: (context) => ProveIdentityInstractionsScreen(
+            args.username, args.proveIdentityResult),
         settings: data,
       );
     },
     ProveIdentityDone: (RouteData data) {
+      var args = data.getArgs<ProveIdentityDoneArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => ProveIdentityDone(),
+        builder: (context) => ProveIdentityDone(args.service),
         settings: data,
       );
     },
     RevokeIdentityScreen: (RouteData data) {
+      var args = data.getArgs<RevokeIdentityScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => RevokeIdentityScreen(),
+        builder: (context) => RevokeIdentityScreen(args.service),
         settings: data,
       );
     },
@@ -319,10 +330,12 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
   Future<dynamic> pushWalletTransferDoneScreen({
     @required String id,
     @required String amount,
+    @required String currentBalance,
   }) =>
       pushNamed<dynamic>(
         Routes.walletTransferDoneScreen,
-        arguments: WalletTransferDoneScreenArguments(id: id, amount: amount),
+        arguments: WalletTransferDoneScreenArguments(
+            id: id, amount: amount, currentBalance: currentBalance),
       );
 
   Future<dynamic> pushAccountScreen() =>
@@ -356,14 +369,31 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
   Future<dynamic> pushProveIdentityScreen() =>
       pushNamed<dynamic>(Routes.proveIdentityScreen);
 
-  Future<dynamic> pushProveIdentityInstractionsScreen() =>
-      pushNamed<dynamic>(Routes.proveIdentityInstractionsScreen);
+  Future<dynamic> pushProveIdentityInstractionsScreen({
+    @required String username,
+    @required ProveIdentityResult proveIdentityResult,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.proveIdentityInstractionsScreen,
+        arguments: ProveIdentityInstractionsScreenArguments(
+            username: username, proveIdentityResult: proveIdentityResult),
+      );
 
-  Future<dynamic> pushProveIdentityDone() =>
-      pushNamed<dynamic>(Routes.proveIdentityDone);
+  Future<dynamic> pushProveIdentityDone({
+    @required String service,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.proveIdentityDone,
+        arguments: ProveIdentityDoneArguments(service: service),
+      );
 
-  Future<dynamic> pushRevokeIdentityScreen() =>
-      pushNamed<dynamic>(Routes.revokeIdentityScreen);
+  Future<dynamic> pushRevokeIdentityScreen({
+    @required SocialIdentityService service,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.revokeIdentityScreen,
+        arguments: RevokeIdentityScreenArguments(service: service),
+      );
 
   Future<dynamic> pushRevokeIdentityDoneScreen() =>
       pushNamed<dynamic>(Routes.revokeIdentityDoneScreen);
@@ -397,7 +427,11 @@ class WalletTransferConfirmationScreenArguments {
 class WalletTransferDoneScreenArguments {
   final String id;
   final String amount;
-  WalletTransferDoneScreenArguments({@required this.id, @required this.amount});
+  final String currentBalance;
+  WalletTransferDoneScreenArguments(
+      {@required this.id,
+      @required this.amount,
+      @required this.currentBalance});
 }
 
 //RevokeDeviceScreen arguments holder class
@@ -410,4 +444,24 @@ class RevokeDeviceScreenArguments {
 class RevokeDeviceDoneScreenArguments {
   final String deviceId;
   RevokeDeviceDoneScreenArguments({@required this.deviceId});
+}
+
+//ProveIdentityInstractionsScreen arguments holder class
+class ProveIdentityInstractionsScreenArguments {
+  final String username;
+  final ProveIdentityResult proveIdentityResult;
+  ProveIdentityInstractionsScreenArguments(
+      {@required this.username, @required this.proveIdentityResult});
+}
+
+//ProveIdentityDone arguments holder class
+class ProveIdentityDoneArguments {
+  final String service;
+  ProveIdentityDoneArguments({@required this.service});
+}
+
+//RevokeIdentityScreen arguments holder class
+class RevokeIdentityScreenArguments {
+  final SocialIdentityService service;
+  RevokeIdentityScreenArguments({@required this.service});
 }

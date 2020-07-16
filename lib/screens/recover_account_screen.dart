@@ -11,7 +11,7 @@ class RecoverAccountStepOneScreen extends StatefulWidget {
 class _RecoverAccountStepOneScreenState
     extends State<RecoverAccountStepOneScreen> {
   TextEditingController _paperKeyController;
-
+  String _errText;
   @override
   void initState() {
     super.initState();
@@ -31,6 +31,12 @@ class _RecoverAccountStepOneScreenState
           Input(
             maxLines: 4,
             minLines: 4,
+            errorText: _errText,
+            onChanged: (_) {
+              if (_errText != null) {
+                _errText = null;
+              }
+            },
             controller: _paperKeyController,
             hintText: 'mandate robust earth scan shrimp second pipe pitch'
                 ' eternal snap glare tooth bean crucial river bar'
@@ -44,6 +50,12 @@ class _RecoverAccountStepOneScreenState
             text: 'Next',
             variant: ButtonVariant.success,
             onPressed: () {
+              if (_paperKeyController.text.trim().isEmpty) {
+                setState(() {
+                  _errText = '??!';
+                });
+                return;
+              }
               FocusScope.of(context).requestFocus(FocusNode());
               ExtendedNavigator.root.pushRecoverAccountStepTwoScreen(
                 paperKey: _paperKeyController.text,
@@ -127,10 +139,12 @@ class _RecoverAccountStepTwoScreenState
             flex: 1,
             child: SizedBox(),
           ),
-          Button(
-            text: 'Restore',
-            variant: ButtonVariant.success,
-            onPressed: _restoreAccount,
+          Builder(
+            builder: (context) => Button(
+              text: 'Restore',
+              variant: ButtonVariant.success,
+              onPressed: () => _restoreAccount(context),
+            ),
           ),
           SizedBox(height: 15.h.toDouble())
         ],
@@ -138,7 +152,7 @@ class _RecoverAccountStepTwoScreenState
     );
   }
 
-  Future<void> _restoreAccount() async {
+  Future<void> _restoreAccount(BuildContext context) async {
     final isLessThan8 = _passwordController.text.length < 8 ||
         _passwordAgainController.text.length < 8;
     if (isLessThan8) {
@@ -163,18 +177,30 @@ class _RecoverAccountStepTwoScreenState
         loadingMessage: 'we are restoring your account',
       ),
     );
-    await _keyService.restore(
-      _passwordController.text,
-      widget.paperKey,
-    );
-    Future.delayed(
-      const Duration(milliseconds: 100),
-      () {
-        ExtendedNavigator.root
-          ..popPages(1)
-          ..pushRecoverAccountDoneScreen();
-      },
-    );
+    try {
+      await _keyService.restore(
+        _passwordController.text,
+        widget.paperKey,
+      );
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () {
+          ExtendedNavigator.root
+            ..popPages(1)
+            ..pushRecoverAccountDoneScreen();
+        },
+      );
+    } catch (_) {
+      ExtendedNavigator.root.pop();
+      final snackbar = SnackBar(
+        content: const Text(
+          "Couldn't restore your account, check the paperkey again",
+        ),
+        backgroundColor: AppColors.danger,
+        duration: const Duration(seconds: 5),
+      );
+      Scaffold.of(context).showSnackBar(snackbar);
+    }
   }
 }
 

@@ -31,4 +31,26 @@ class AccountService {
       identities: identities,
     );
   }
+
+  Future<List<SocialIdentityService>> identities() async {
+    final uid = await _clientService.uid();
+    return _identityService.identities(uid);
+  }
+
+  Future<List<Device>> devices() async {
+    final deviceId = await _clientService.deviceId();
+    final device = Device(id: deviceId, currentDevice: true);
+    final devices = await _deviceService.devices();
+    devices.removeWhere((element) => element.id == deviceId);
+    return [device, ...devices];
+  }
+
+  Future<Device> currentDevice() async {
+    final deviceId = await _clientService.deviceId();
+    return Device(id: deviceId, currentDevice: true);
+  }
+
+  Future<String> uid() {
+    return _clientService.uid();
+  }
 }

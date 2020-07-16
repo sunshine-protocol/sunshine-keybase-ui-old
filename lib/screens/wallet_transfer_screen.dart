@@ -41,7 +41,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
           ),
           SizedBox(height: 20.h.toDouble()),
           Input(
-            hintText: 'UID or Username',
+            hintText: 'UID or username@service',
             controller: _idController,
             errorText: _errText,
             onChanged: (_) {
@@ -60,9 +60,12 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
             onPressed: () {
               if (_idController.text.isEmpty) {
                 setState(() {
-                  _errText = 'Please enter the UID';
+                  _errText = 'Please enter the UID or username@service';
                 });
+                return;
               }
+              // hide keyboard
+              FocusScope.of(context).requestFocus(FocusNode());
               ExtendedNavigator.root.pushWalletTransferConfirmationScreen(
                 amount: widget.amount,
                 id: _idController.text,
@@ -120,10 +123,12 @@ class _WalletTransferConfirmationScreenState
             flex: 1,
             child: SizedBox(),
           ),
-          Button(
-            text: 'Transfer',
-            variant: ButtonVariant.success,
-            onPressed: _walletTransfer,
+          Builder(
+            builder: (context) => Button(
+              text: 'Transfer',
+              variant: ButtonVariant.success,
+              onPressed: () => _walletTransfer(context),
+            ),
           ),
           SizedBox(height: 15.h.toDouble())
         ],
@@ -131,30 +136,46 @@ class _WalletTransferConfirmationScreenState
     );
   }
 
-  Future<void> _walletTransfer() async {
+  Future<void> _walletTransfer(BuildContext context) async {
     // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => LoadingView(
-        loadingMessage: 'we are sending ${widget.amount} tokens',
+        loadingMessage:
+            'we are sending ${widget.amount} tokens to ${widget.id}',
       ),
     );
-    await _walletService.transfer(
-      widget.id,
-      int.parse(widget.amount),
-    );
-    await Future.delayed(
-      const Duration(milliseconds: 100),
-      () {
-        ExtendedNavigator.root
-          ..popPages(2)
-          ..pushWalletTransferDoneScreen(
-            id: widget.id,
-            amount: widget.amount,
-          );
-      },
-    );
+    // hide keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
+    try {
+      final currentBalance = await _walletService.transfer(
+        widget.id,
+        int.parse(widget.amount),
+      );
+      await Future.delayed(
+        const Duration(milliseconds: 100),
+        () {
+          ExtendedNavigator.root
+            ..popPages(2)
+            ..pushWalletTransferDoneScreen(
+              id: widget.id,
+              amount: widget.amount,
+              currentBalance: currentBalance,
+            );
+        },
+      );
+    } catch (_) {
+      ExtendedNavigator.root.pop();
+      final snackbar = SnackBar(
+        content: const Text(
+          "Couldn't complete the transaction, check the UID or username again.",
+        ),
+        backgroundColor: AppColors.danger,
+        duration: const Duration(seconds: 5),
+      );
+      Scaffold.of(context).showSnackBar(snackbar);
+    }
   }
 }
 
@@ -189,9 +210,10 @@ class _TransferTokensValue extends StatelessWidget {
 }
 
 class WalletTransferDoneScreen extends StatelessWidget {
-  const WalletTransferDoneScreen(this.id, this.amount);
+  const WalletTransferDoneScreen(this.id, this.amount, this.currentBalance);
   final String amount;
   final String id;
+  final String currentBalance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,6 +228,14 @@ class WalletTransferDoneScreen extends StatelessWidget {
           Center(child: HeaderText('tokens to $id')),
           SizedBox(height: 30.h.toDouble()),
           const SunshineLogo(),
+          SizedBox(height: 30.h.toDouble()),
+          Center(
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: HintText('Your current balance: ☼$currentBalance'),
+            ),
+          ),
+          SizedBox(height: 30.h.toDouble()),
           const Expanded(
             flex: 1,
             child: SizedBox(),

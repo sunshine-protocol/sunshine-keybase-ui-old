@@ -16,7 +16,7 @@ class _NumpadState extends State<Numpad> {
     if (number.length < widget.length) {
       setState(() {
         number += val;
-        widget.onChange(number);
+        widget.onChange(number.replaceAll(RegExp('^0+'), ''));
       });
     }
   }
@@ -25,7 +25,7 @@ class _NumpadState extends State<Numpad> {
     if (text.isNotEmpty) {
       setState(() {
         number = text.substring(0, text.length - 1);
-        widget.onChange(number);
+        widget.onChange(number.replaceAll(RegExp('^0+'), ''));
       });
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:identity/identity.dart';
 import 'package:identity/models/models.dart';
 
@@ -28,32 +29,27 @@ class __IdentitesScreenBodyState extends State<_IdentitesScreenBody> {
 
   @override
   Widget build(BuildContext context) {
-    final f = _accountService.currentAccount();
-    return ListView(
-      children: [
-        ListCell(
-          title: 'Github',
-          trailing: SizedBox(
-            width: 80.w.toDouble(),
-            child: FutureBuilder<Account>(
-              future: f,
-              initialData: Account(identities: [
-                GithubIdentity(proofUrl: null, username: '...'),
-              ]),
-              builder: (context, snapshot) {
-                _github = snapshot.data?.identities?.firstWhere(
-                  (id) => id.serviceName == 'github',
-                  orElse: () => null,
-                );
-                return HintText(_github?.username ?? 'N/A');
-              },
-            ),
-          ),
-          onTap: () {
-            _showActions(context);
+    return ListCell(
+      title: 'Github',
+      trailing: SizedBox(
+        width: 80.w.toDouble(),
+        child: FutureBuilder<List<SocialIdentityService>>(
+          future: _accountService.identities(),
+          initialData: [
+            GithubIdentity(proofUrl: null, username: '...'),
+          ],
+          builder: (context, snapshot) {
+            _github = snapshot.data?.firstWhere(
+              (id) => id.serviceName == 'github',
+              orElse: () => null,
+            );
+            return HintText(_github?.username ?? 'N/A');
           },
         ),
-      ],
+      ),
+      onTap: () {
+        _showActions(context);
+      },
     );
   }
 
@@ -96,7 +92,7 @@ class __IdentitesScreenBodyState extends State<_IdentitesScreenBody> {
                   onPressed: () {
                     ExtendedNavigator.root
                       ..pop()
-                      ..pushRevokeIdentityScreen();
+                      ..pushRevokeIdentityScreen(service: _github);
                   },
                 )
               ] else ...[
@@ -124,7 +120,23 @@ class __IdentitesScreenBodyState extends State<_IdentitesScreenBody> {
   }
 }
 
-class ProveIdentityScreen extends StatelessWidget {
+class ProveIdentityScreen extends StatefulWidget {
+  @override
+  _ProveIdentityScreenState createState() => _ProveIdentityScreenState();
+}
+
+class _ProveIdentityScreenState extends State<ProveIdentityScreen> {
+  TextEditingController _username;
+  String _errText;
+  IdentityService _identityService;
+
+  @override
+  void initState() {
+    super.initState();
+    _username = TextEditingController();
+    _identityService = GetIt.I.get<IdentityService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,24 +146,91 @@ class ProveIdentityScreen extends StatelessWidget {
         children: [
           const HeaderText('Prove your Github identity'),
           SizedBox(height: 20.h.toDouble()),
-          const Input(hintText: 'Github Username'),
+          Input(
+            hintText: 'Github Username',
+            controller: _username,
+            errorText: _errText,
+            maxLength: 38,
+            onChanged: (_) {
+              if (_errText != null) {
+                _errText = null;
+              }
+            },
+            inputFormatters: [
+              WhitelistingTextInputFormatter(
+                RegExp(
+                  '^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}\$',
+                  caseSensitive: true,
+                ),
+              ),
+            ],
+          ),
           SizedBox(height: 5.h.toDouble()),
           const Expanded(child: SizedBox()),
           Button(
             text: 'Next',
             variant: ButtonVariant.success,
-            onPressed: () {
-              ExtendedNavigator.root.pushProveIdentityInstractionsScreen();
-            },
+            onPressed: () => _proveGithubIdentity(context),
           ),
           SizedBox(height: 15.h.toDouble()),
         ],
       ),
     );
   }
+
+  Future<void> _proveGithubIdentity(BuildContext context) async {
+    if (_username.text.isEmpty || _username.text.length < 3) {
+      setState(() {
+        _errText = 'Please Provide a valid username';
+      });
+    }
+    // hide keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
+    // ignore: unawaited_futures
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const LoadingView(
+        loadingMessage: 'we are creating a proof for your account',
+      ),
+    );
+    final result = await _identityService.proveIdentity(
+      GithubIdentity(username: _username.text, proofUrl: null),
+    );
+    print(result.proof);
+    Future.delayed(
+      const Duration(milliseconds: 100),
+      () {
+        ExtendedNavigator.root
+          ..popPages(1)
+          ..pushProveIdentityInstractionsScreen(
+            username: _username.text,
+            proveIdentityResult: result,
+          );
+      },
+    );
+  }
 }
 
-class ProveIdentityInstractionsScreen extends StatelessWidget {
+class ProveIdentityInstractionsScreen extends StatefulWidget {
+  const ProveIdentityInstractionsScreen(
+    this.username,
+    this.proveIdentityResult,
+  );
+  final String username;
+  final ProveIdentityResult proveIdentityResult;
+  @override
+  _ProveIdentityInstractionsScreenState createState() =>
+      _ProveIdentityInstractionsScreenState();
+}
+
+class _ProveIdentityInstractionsScreenState
+    extends State<ProveIdentityInstractionsScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,51 +242,57 @@ class ProveIdentityInstractionsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const HeaderText('Hey, shekohex'),
+            HeaderText('Hey, ${widget.username}'),
             SizedBox(height: 15.h.toDouble()),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w.toDouble()),
-              child: const HintText(
-                'Login to your Github account and paste the text below'
-                ' into a Public gist called substrate-identity-proof.md',
+              child: HintText(
+                widget.proveIdentityResult.instructions,
                 maxLines: 4,
                 softWrap: true,
                 textAlign: TextAlign.start,
               ),
             ),
             SizedBox(height: 15.h.toDouble()),
-            const SingleChildScrollView(
+            SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Input(
-                initialValue: '',
+                initialValue: widget.proveIdentityResult.proof,
                 maxLines: 16,
                 readOnly: true,
               ),
             ),
             SizedBox(height: 24.h.toDouble()),
-            Button(
-              text: 'Copy to clipboard',
-              variant: ButtonVariant.primary,
-              onPressed: () {
-                // TODO(shekohex): clipboard actions
-              },
-            ),
+            _CopyToClipboardButton(text: widget.proveIdentityResult.proof),
             SizedBox(height: 10.h.toDouble()),
-            Button(
-              text: 'OK posted, Check for it!',
-              variant: ButtonVariant.success,
-              onPressed: () {
-                _checkIdentity(context);
-              },
-            ),
+            const _CheckIdentityButton(),
             SizedBox(height: 15.h.toDouble()),
           ],
         ),
       ),
     );
   }
+}
 
-  void _checkIdentity(BuildContext context) {
+class _CheckIdentityButton extends StatelessWidget {
+  const _CheckIdentityButton({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Button(
+      text: 'OK posted, Check for it!',
+      variant: ButtonVariant.success,
+      onPressed: () {
+        _checkIdentity(context);
+      },
+    );
+  }
+
+  Future<void> _checkIdentity(BuildContext context) async {
+    final _accountService = GetIt.I.get<AccountService>();
+    // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -215,18 +300,56 @@ class ProveIdentityInstractionsScreen extends StatelessWidget {
         loadingMessage: 'we are checking for your identity',
       ),
     );
-    Future.delayed(
-      const Duration(seconds: 2),
-      () {
-        ExtendedNavigator.root
-          ..popPages(1)
-          ..pushProveIdentityDone();
+    final identities = await _accountService.identities();
+    final github = identities.firstWhere(
+      (s) => s.serviceName == 'github' && s.isProved,
+      orElse: () => null,
+    );
+    if (github != null) {
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () {
+          ExtendedNavigator.root
+            ..popPages(1)
+            ..pushProveIdentityDone(service: github.display);
+        },
+      );
+    } else {
+      // not proved yet!
+      ExtendedNavigator.root.pop();
+      final snackbar = SnackBar(
+        content: const Text('No Proof found, please post it first'),
+        backgroundColor: AppColors.danger,
+        duration: const Duration(seconds: 5),
+      );
+      Scaffold.of(context).showSnackBar(snackbar);
+    }
+  }
+}
+
+class _CopyToClipboardButton extends StatelessWidget {
+  const _CopyToClipboardButton({
+    @required this.text,
+    Key key,
+  }) : super(key: key);
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Button(
+      text: 'Copy to clipboard',
+      variant: ButtonVariant.primary,
+      onPressed: () {
+        Clipboard.setData(ClipboardData(text: text));
+        const snackbar = SnackBar(content: Text('Copied to clipboard'));
+        Scaffold.of(context).showSnackBar(snackbar);
       },
     );
   }
 }
 
 class ProveIdentityDone extends StatelessWidget {
+  const ProveIdentityDone(this.service);
+  final String service;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -235,8 +358,8 @@ class ProveIdentityDone extends StatelessWidget {
           SizedBox(height: 120.h.toDouble()),
           const HeaderText('You successfully proved'),
           SizedBox(height: 30.h.toDouble()),
-          const Input(
-            hintText: 'shekohex@github',
+          Input(
+            hintText: service,
             readOnly: true,
           ),
           SizedBox(height: 20.h.toDouble()),
@@ -252,7 +375,7 @@ class ProveIdentityDone extends StatelessWidget {
             variant: ButtonVariant.primary,
             onPressed: () {
               ExtendedNavigator.root
-                ..popPages(1)
+                ..popPages(5)
                 ..pushIdentitiesScreen();
             },
           ),
@@ -264,6 +387,8 @@ class ProveIdentityDone extends StatelessWidget {
 }
 
 class RevokeIdentityScreen extends StatelessWidget {
+  const RevokeIdentityScreen(this.service);
+  final SocialIdentityService service;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -273,8 +398,8 @@ class RevokeIdentityScreen extends StatelessWidget {
           SizedBox(height: 50.h.toDouble()),
           const HeaderText('Your are about to revoke'),
           SizedBox(height: 20.h.toDouble()),
-          const Input(
-            hintText: 'shekohex@github',
+          Input(
+            hintText: service.display,
             readOnly: true,
           ),
           SizedBox(height: 40.h.toDouble()),
@@ -302,7 +427,9 @@ class RevokeIdentityScreen extends StatelessWidget {
     );
   }
 
-  void _revokeIdentity(BuildContext context) {
+  Future<void> _revokeIdentity(BuildContext context) async {
+    final _identityService = GetIt.I.get<IdentityService>();
+    // ignore: unawaited_futures
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -310,14 +437,20 @@ class RevokeIdentityScreen extends StatelessWidget {
         loadingMessage: 'we are revoking this identity',
       ),
     );
-    Future.delayed(
-      const Duration(seconds: 2),
-      () {
-        ExtendedNavigator.root
-          ..popPages(1)
-          ..pushRevokeIdentityDoneScreen();
-      },
-    );
+    final result = await _identityService.revokeIdentity(service);
+    if (result) {
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () {
+          ExtendedNavigator.root
+            ..popPages(1)
+            ..pushRevokeIdentityDoneScreen();
+        },
+      );
+    } else {
+      // handle error here
+      ExtendedNavigator.root.pop();
+    }
   }
 }
 

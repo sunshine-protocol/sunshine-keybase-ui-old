@@ -115,10 +115,12 @@ class _GenerateAccountStepTwoScreenState
             flex: 1,
             child: SizedBox(),
           ),
-          Button(
-            text: 'Generate',
-            variant: ButtonVariant.success,
-            onPressed: _generateAccount,
+          Builder(
+            builder: (context) => Button(
+              text: 'Generate',
+              variant: ButtonVariant.success,
+              onPressed: () => _generateAccount(context),
+            ),
           ),
           SizedBox(height: 15.h.toDouble())
         ],
@@ -126,7 +128,7 @@ class _GenerateAccountStepTwoScreenState
     );
   }
 
-  Future<void> _generateAccount() async {
+  Future<void> _generateAccount(BuildContext context) async {
     final isLessThan8 = _passwordController.text.length < 8 ||
         _passwordAgainController.text.length < 8;
     if (isLessThan8) {
@@ -151,15 +153,26 @@ class _GenerateAccountStepTwoScreenState
         loadingMessage: 'we are creating account for you',
       ),
     );
-    await _keyService.generate(_passwordController.text);
-    await Future.delayed(
-      const Duration(milliseconds: 100),
-      () {
-        ExtendedNavigator.root
-          ..popPages(2)
-          ..pushGenerateAccountDoneScreen();
-      },
-    );
+    await Future.delayed(const Duration(milliseconds: 100));
+    try {
+      await _keyService.generate(_passwordController.text);
+      await Future.delayed(
+        const Duration(milliseconds: 100),
+        () {
+          ExtendedNavigator.root
+            ..popPages(2)
+            ..pushGenerateAccountDoneScreen();
+        },
+      );
+    } catch (_) {
+      ExtendedNavigator.root.pop();
+      final snackbar = SnackBar(
+        content: const Text("Couldn't generate the account"),
+        backgroundColor: AppColors.danger,
+        duration: const Duration(seconds: 5),
+      );
+      Scaffold.of(context).showSnackBar(snackbar);
+    }
   }
 }
 

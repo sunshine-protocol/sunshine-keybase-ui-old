@@ -30,6 +30,15 @@ class IdentityService {
 
   SocialIdentityService _parse(String identity) {
     print(identity);
-    return GithubIdentity(username: 'shekohex', proofUrl: '');
+    final regex =
+        RegExp('^\w{3,38}@github\shttps:\/\/gist\.github\.com\/[\w\/]+\$');
+    if (regex.hasMatch(identity)) {
+      final parts = identity.split(' ');
+      print(parts);
+      final parts2 = parts[0].split('@');
+      return GithubIdentity(username: parts2[0], proofUrl: parts[1]);
+    } else {
+      return GithubIdentity(username: null, proofUrl: null);
+    }
   }
 }
