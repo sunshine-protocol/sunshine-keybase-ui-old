@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:identity/identity.dart';
 import 'package:identity/models/models.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IdentitiesScreen extends StatelessWidget {
   @override
@@ -80,9 +81,11 @@ class __IdentitesScreenBodyState extends State<_IdentitesScreenBody> {
                 Button(
                   text: 'View Proof',
                   variant: ButtonVariant.success,
-                  onPressed: () {
-                    print(_github.proofUrl);
-                    ExtendedNavigator.root.pop();
+                  onPressed: () async {
+                    if (await canLaunch(_github.proofUrl)) {
+                      ExtendedNavigator.root.pop();
+                      await launch(_github.proofUrl);
+                    }
                   },
                 ),
                 SizedBox(height: 10.h.toDouble()),
