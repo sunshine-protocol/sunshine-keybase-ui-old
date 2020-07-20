@@ -18,6 +18,7 @@ A new flutter plugin project.
   s.static_framework = true
   s.vendored_libraries = "**/*.a"
   s.dependency 'Flutter'
+  s.frameworks = "IOKit", "CoreFoundation"
   s.platform = :ios, '8.0'
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
