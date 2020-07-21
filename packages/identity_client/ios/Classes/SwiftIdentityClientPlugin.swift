@@ -13,6 +13,6 @@ public class SwiftIdentityClientPlugin: NSObject, FlutterPlugin {
   }
 
   public static func dummyMethodToEnforceBundling() {
-    last_error_length()
+    client_setup_logger()
   }
 }
