@@ -6,6 +6,8 @@ import 'package:ffi/ffi.dart' as ffi;
 
 // ignore_for_file: unused_import, camel_case_types, non_constant_identifier_names
 final DynamicLibrary _dl = _open();
+/// Reference to the Dynamic Library, it should be only used for low-level access
+final DynamicLibrary dl = _dl;
 DynamicLibrary _open() {
   if (Platform.isAndroid) return DynamicLibrary.open('libidentity_client.so');
   if (Platform.isIOS) return DynamicLibrary.executable();
@@ -269,14 +271,6 @@ final _client_last_error_Dart _client_last_error = _dl.lookupFunction<_client_la
 typedef _client_last_error_C = Pointer<ffi.Utf8> Function();
 typedef _client_last_error_Dart = Pointer<ffi.Utf8> Function();
 
-/// <p class="para-brief"> This should be called once maybe before you create the client it just constract the Logger for us</p>
-void client_setup_logger() {
-  _client_setup_logger();
-}
-final _client_setup_logger_Dart _client_setup_logger = _dl.lookupFunction<_client_setup_logger_C, _client_setup_logger_Dart>('client_setup_logger');
-typedef _client_setup_logger_C = Void Function();
-typedef _client_setup_logger_Dart = void Function();
-
 /// <p class="para-brief"> Get the balance of an identifier. returns and string but normally it&#39;s a `u128` encoded as string.</p>
 int client_wallet_balance(
   int port,
@@ -314,7 +308,23 @@ typedef _client_wallet_transfer_Dart = int Function(
   int amount,
 );
 
-/// C function `store_dart_post_cobject`.
+/// <p class="para-brief"> Check if the Logger is already initialized to prevent any errors of calling init again. return 1 if initialized before, 0 otherwise.</p>
+int frusty_logger_is_initialized() {
+  return _frusty_logger_is_initialized();
+}
+final _frusty_logger_is_initialized_Dart _frusty_logger_is_initialized = _dl.lookupFunction<_frusty_logger_is_initialized_C, _frusty_logger_is_initialized_Dart>('frusty_logger_is_initialized');
+typedef _frusty_logger_is_initialized_C = Int32 Function();
+typedef _frusty_logger_is_initialized_Dart = int Function();
+
+/// <p class="para-brief"> a hack to make iOS link to this lib</p>
+void link_me_please() {
+  _link_me_please();
+}
+final _link_me_please_Dart _link_me_please = _dl.lookupFunction<_link_me_please_C, _link_me_please_Dart>('link_me_please');
+typedef _link_me_please_C = Void Function();
+typedef _link_me_please_Dart = void Function();
+
+/// Binding to `allo-isolate` crate
 void store_dart_post_cobject(
   Pointer<NativeFunction<Int8 Function(Int64, Pointer<Dart_CObject>)>> ptr,
 ) {

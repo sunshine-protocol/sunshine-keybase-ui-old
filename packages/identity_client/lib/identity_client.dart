@@ -6,6 +6,7 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:isolate/ports.dart';
+import 'package:frusty_logger/frusty_logger.dart';
 
 import 'constants.dart' as ffi;
 import 'ffi.dart' as ffi;
@@ -15,7 +16,7 @@ class IdentityClient {
       : _root = root,
         _chainspecPath = chainspecPath {
     ffi.store_dart_post_cobject(NativeApi.postCObject);
-    ffi.client_setup_logger();
+    FrustyLogger.init(ffi.dl);
   }
 
   Future<bool> get ready => startUpClient();

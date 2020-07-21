@@ -1,6 +1,7 @@
 package io.flutter.plugins;
 
 import io.flutter.plugin.common.PluginRegistry;
+import foundation.sunshine.frusty_logger.FrustyLoggerPlugin;
 import foundation.sunshine.identity_client.IdentityClientPlugin;
 
 /**
@@ -11,6 +12,7 @@ public final class GeneratedPluginRegistrant {
     if (alreadyRegisteredWith(registry)) {
       return;
     }
+    FrustyLoggerPlugin.registerWith(registry.registrarFor("foundation.sunshine.frusty_logger.FrustyLoggerPlugin"));
     IdentityClientPlugin.registerWith(registry.registrarFor("foundation.sunshine.identity_client.IdentityClientPlugin"));
   }
 

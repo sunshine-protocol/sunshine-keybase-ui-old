@@ -18,8 +18,9 @@ features = ["faucet"]
 git = "https://github.com/sunshine-protocol/sunshine.git"
 package = "sunshine-client"
 
-[target.'cfg(target_os = "android")'.dependencies]
-android_logger = "0.8"
+[dependencies.frusty-logger]
+git = "https://github.com/sunshine-protocol/frusty-logger.git"
+
 
 [features]
 default = ["faucet"]

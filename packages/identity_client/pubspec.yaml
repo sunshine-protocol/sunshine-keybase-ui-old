@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   ffi:
   isolate:
+  frusty_logger:
+    git: https://github.com/sunshine-protocol/frusty-logger.git
 dev_dependencies:
   flutter_test:
     sdk: flutter

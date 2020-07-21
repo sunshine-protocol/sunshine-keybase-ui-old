@@ -124,12 +124,6 @@ int32_t client_key_unlock(int64_t port, const char *password);
 const char *client_last_error(void);
 
 /**
- * This should be called once maybe before you create the client
- * it just constract the Logger for us
- */
-void client_setup_logger(void);
-
-/**
  * Get the balance of an identifier.
  * returns and string but normally it's a `u128` encoded as string.
  */
@@ -140,3 +134,14 @@ int32_t client_wallet_balance(int64_t port, const char *identifier);
  * returns current account balance after the transaction.
  */
 int32_t client_wallet_transfer(int64_t port, const char *identifier, uint64_t amount);
+
+/**
+ * Check if the Logger is already initialized to prevent any errors of calling init again.
+ * return 1 if initialized before, 0 otherwise.
+ */
+int32_t frusty_logger_is_initialized(void);
+
+/**
+ * a hack to make iOS link to this lib
+ */
+void link_me_please(void);

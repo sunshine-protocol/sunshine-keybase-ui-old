@@ -161,24 +161,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f75caca5bd0e6176a1fdf24799ab19dc50af1fd067192807d9ebb3eaea12ca3f"
 
 [[package]]
-name = "android_log-sys"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8052e2d8aabbb8d556d6abbcce2a22b9590996c5f849b9c7ce4544a2e3b984e"
-
-[[package]]
-name = "android_logger"
-version = "0.8.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8cbd542dd180566fad88fd2729a53a62a734843c626638006a9d63ec0688484e"
-dependencies = [
- "android_log-sys",
- "env_logger",
- "lazy_static",
- "log",
-]
-
-[[package]]
 name = "ansi_term"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1321,6 +1303,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "frusty-logger"
+version = "0.1.0"
+source = "git+https://github.com/sunshine-protocol/frusty-logger.git#9adb99207404471869b0c6f36788a66b6aa06454"
+dependencies = [
+ "allo-isolate",
+ "env_logger",
+ "log",
+ "yansi",
+]
+
+[[package]]
 name = "fs2"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1920,7 +1913,7 @@ dependencies = [
 name = "identity-client"
 version = "0.1.0"
 dependencies = [
- "android_logger",
+ "frusty-logger",
  "log",
  "sunshine-client",
  "sunshine-identity-ffi",
@@ -7601,6 +7594,12 @@ dependencies = [
  "rand 0.7.3",
  "static_assertions",
 ]
+
+[[package]]
+name = "yansi"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fc79f4a1e39857fc00c3f662cbf2651c771f00e9c15fe2abc341806bd46bd71"
 
 [[package]]
 name = "zeroize"
