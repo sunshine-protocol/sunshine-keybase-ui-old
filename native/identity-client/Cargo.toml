@@ -5,7 +5,10 @@ authors = ["Shady Khalifa <shekohex@gmail.com>"]
 edition = "2018"
 
 [lib]
-crate-type = ["cdylib", "staticlib"]
+# this value will change depending on the target os
+# for iOS it would be `staticlib`
+# for android it would be `cdylib`
+crate-type = ["rlib"]
 
 [dependencies]
 log = "0.4"

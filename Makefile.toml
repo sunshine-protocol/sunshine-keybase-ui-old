@@ -3,6 +3,7 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 CARGO_MAKE_WORKSPACE_INCLUDE_MEMBERS = ["native/identity-client"]
 ANDROID_PLATFORM_VERSION = "28"
 LIB_OUT_DIR = "debug"
+TARGET_OS = "unknown"
 DEV = true
 RELEASE = false
 
@@ -18,24 +19,28 @@ disabled = true
 description = "development android x86_64 emulator"
 category = "Build"
 dependencies = [
+  "setup-crate-type-android",
   "pre-android",
   "android-x86_64",
   "android-x86_64-release",
   "post-android-x86_64",
   "cbindgen",
-  "dart-bindgen"
+  "dart-bindgen",
+  "post-android",
   ]
 
 [tasks.android-arm]
 description = "build android ARM64 for actual device"
 category = "Build"
 dependencies = [
+  "setup-crate-type-android",
   "pre-android",
   "android-aarch64",
   "android-aarch64-release",
   "post-android-aarch64",
   "cbindgen",
-  "dart-bindgen"
+  "dart-bindgen",
+  "post-android",
   ]
 
 
@@ -55,6 +60,9 @@ description = "Build ios targets."
 category = "Build"
 command = "cargo"
 args = ["lipo"]
+dependencies = [
+    "setup-crate-type-ios",
+]
 
 [tasks.ios-release]
 condition = { platforms = ["mac"], env_true = ["RELEASE"] }
@@ -62,6 +70,9 @@ description = "Build ios targets."
 category = "Build"
 command = "cargo"
 args = ["lipo", "--release"]
+dependencies = [
+    "setup-crate-type-ios",
+]
 
 [tasks.post-ios]
 script_runner = "@duckscript"
@@ -76,11 +87,13 @@ script = [
     ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/packages/${CARGO_MAKE_CRATE_FS_NAME}/ios/Classes/binding.h
     """,
 ]
+dependencies = ["restore-crate-type"]
 
 [tasks.android]
 description = "Build android targets."
 category = "Build"
 dependencies = [
+    "setup-crate-type-android",
     "pre-android",
     "android-aarch64",
     "android-aarch64-release",
@@ -94,6 +107,7 @@ dependencies = [
     "android-x86_64",
     "android-x86_64-release",
     "post-android-x86_64",
+    "post-android"
 ]
 
 [tasks.android-aarch64]
@@ -256,6 +270,9 @@ script = [
     """,
 ]
 
+[tasks.post-android]
+dependencies = ["restore-crate-type"]
+
 [tasks.cbindgen]
 command = "cbindgen"
 args = [
@@ -282,4 +299,61 @@ args = [
   "--ios",
   "executable",
   "--allo-isolate"
+]
+
+[tasks.setup-crate-type-android]
+private = true
+env = { TARGET_OS = "android" }
+run_task = "setup-crate-type"
+
+[tasks.setup-crate-type-ios]
+private = true
+env = { TARGET_OS = "ios" }
+run_task = "setup-crate-type"
+
+[tasks.setup-crate-type]
+private = true
+script_runner = "@duckscript"
+script = [
+    """
+    toml = readfile ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/native/${CARGO_MAKE_CRATE_CURRENT_WORKSPACE_MEMBER}/Cargo.toml
+    crate_type = set ""
+    os = get_env TARGET_OS
+    is_android = eq ${os} "android"
+    is_ios = eq ${os} "ios"
+    if ${is_android}
+      crate_type = set "cdylib"
+    elseif ${is_ios}
+      crate_type = set "staticlib"
+    else
+      crate_type = set "rlib"
+    end
+    val = replace ${toml} "rlib" ${crate_type}
+    result = writefile ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/native/${CARGO_MAKE_CRATE_CURRENT_WORKSPACE_MEMBER}/Cargo.toml ${val}
+    assert ${result}
+    """,
+]
+
+
+[tasks.restore-crate-type]
+private = true
+script_runner = "@duckscript"
+script = [
+    """
+    toml = readfile ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/native/${CARGO_MAKE_CRATE_CURRENT_WORKSPACE_MEMBER}/Cargo.toml
+    crate_type = set ""
+    os = get_env TARGET_OS
+    is_android = eq ${os} "android"
+    is_ios = eq ${os} "ios"
+    if ${is_android}
+      crate_type = set "cdylib"
+    elseif ${is_ios}
+      crate_type = set "staticlib"
+    else
+      crate_type = set "rlib"
+    end
+    val = replace ${toml} ${crate_type} "rlib"
+    result = writefile ${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/native/${CARGO_MAKE_CRATE_CURRENT_WORKSPACE_MEMBER}/Cargo.toml ${val}
+    assert ${result}
+    """,
 ]
