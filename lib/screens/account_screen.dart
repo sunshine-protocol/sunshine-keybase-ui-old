@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:identity/identity.dart';
 import 'package:identity/models/models.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccountScreen extends StatelessWidget {
   final _accountService = GetIt.I.get<AccountService>();
@@ -112,7 +113,24 @@ class AccountScreen extends StatelessWidget {
           SizedBox(height: 10.w.toDouble()),
           ListCell(
             title: 'About',
-            trailing: Icon(Icons.chevron_right, size: 40),
+            trailing: Icon(Icons.share, size: 30),
+            onTap: () {
+              showAboutDialog(
+                  context: context,
+                  applicationVersion: 'v0.1.0',
+                  applicationIcon: const SunshineLogo(),
+                  useRootNavigator: true,
+                  applicationLegalese: 'Powered by Substrate',
+                  children: [
+                    const SizedBox(height: 10),
+                    FlatButton(
+                      child: const Text('Website'),
+                      onPressed: () {
+                        launch('https://sunshine.foundation/');
+                      },
+                    )
+                  ]);
+            },
           ),
         ],
       ),
