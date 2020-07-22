@@ -162,7 +162,7 @@ class _ProveIdentityScreenState extends State<ProveIdentityScreen> {
             inputFormatters: [
               WhitelistingTextInputFormatter(
                 RegExp(
-                   r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$",
+                  r'^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$',
                   caseSensitive: true,
                 ),
               ),
@@ -451,7 +451,7 @@ class RevokeIdentityScreen extends StatelessWidget {
         () {
           ExtendedNavigator.root
             ..popPages(1)
-            ..pushRevokeIdentityDoneScreen();
+            ..pushRevokeIdentityDoneScreen(service: service);
         },
       );
     } else {
@@ -462,6 +462,8 @@ class RevokeIdentityScreen extends StatelessWidget {
 }
 
 class RevokeIdentityDoneScreen extends StatelessWidget {
+  const RevokeIdentityDoneScreen(this.service);
+  final SocialIdentityService service;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -470,8 +472,8 @@ class RevokeIdentityDoneScreen extends StatelessWidget {
           SizedBox(height: 120.h.toDouble()),
           const HeaderText('You successfully revoked'),
           SizedBox(height: 20.h.toDouble()),
-          const Input(
-            hintText: 'shekohex@github',
+          Input(
+            hintText: service.display,
             readOnly: true,
           ),
           SizedBox(height: 20.h.toDouble()),

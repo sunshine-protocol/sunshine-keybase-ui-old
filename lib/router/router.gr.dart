@@ -265,8 +265,9 @@ class Router extends RouterBase {
       );
     },
     RevokeIdentityDoneScreen: (RouteData data) {
+      var args = data.getArgs<RevokeIdentityDoneScreenArguments>(nullOk: false);
       return buildAdaptivePageRoute<dynamic>(
-        builder: (context) => RevokeIdentityDoneScreen(),
+        builder: (context) => RevokeIdentityDoneScreen(args.service),
         settings: data,
       );
     },
@@ -391,8 +392,13 @@ extension RouterNavigationHelperMethods on ExtendedNavigatorState {
         arguments: RevokeIdentityScreenArguments(service: service),
       );
 
-  Future<dynamic> pushRevokeIdentityDoneScreen() =>
-      pushNamed<dynamic>(Routes.revokeIdentityDoneScreen);
+  Future<dynamic> pushRevokeIdentityDoneScreen({
+    @required SocialIdentityService service,
+  }) =>
+      pushNamed<dynamic>(
+        Routes.revokeIdentityDoneScreen,
+        arguments: RevokeIdentityDoneScreenArguments(service: service),
+      );
 }
 
 // *************************************************************************
@@ -456,4 +462,10 @@ class ProveIdentityDoneArguments {
 class RevokeIdentityScreenArguments {
   final SocialIdentityService service;
   RevokeIdentityScreenArguments({@required this.service});
+}
+
+//RevokeIdentityDoneScreen arguments holder class
+class RevokeIdentityDoneScreenArguments {
+  final SocialIdentityService service;
+  RevokeIdentityDoneScreenArguments({@required this.service});
 }
